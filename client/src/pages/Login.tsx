@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { PublicHeader } from '@/components/PublicHeader';
 import { useToast } from '@/hooks/use-toast';
 import { Briefcase, Mail, Lock } from 'lucide-react';
 
@@ -50,7 +51,9 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent via-background to-muted p-4">
+    <div className="min-h-screen bg-background">
+      <PublicHeader showCTA={false} />
+      <div className="flex items-center justify-center bg-gradient-to-br from-accent via-background to-muted p-4" style={{ minHeight: 'calc(100vh - 64px)' }}>
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="space-y-4 text-center pb-6">
           <div className="flex justify-center">
@@ -128,6 +131,7 @@ export default function Login() {
           </p>
         </CardFooter>
       </Card>
+      </div>
     </div>
   );
 }

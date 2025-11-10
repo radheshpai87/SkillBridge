@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { PublicHeader } from '@/components/PublicHeader';
 import { useToast } from '@/hooks/use-toast';
 import { Briefcase, Mail, Lock, User, GraduationCap, Building2 } from 'lucide-react';
 import { SkillBadge } from '@/components/SkillBadge';
@@ -78,7 +79,9 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent via-background to-muted p-4 py-12">
+    <div className="min-h-screen bg-background">
+      <PublicHeader showCTA={false} />
+      <div className="flex items-center justify-center bg-gradient-to-br from-accent via-background to-muted p-4 py-12" style={{ minHeight: 'calc(100vh - 64px)' }}>
       <Card className="w-full max-w-2xl shadow-2xl">
         <CardHeader className="space-y-4 text-center pb-6">
           <div className="flex justify-center">
@@ -306,6 +309,7 @@ export default function Register() {
           </p>
         </CardFooter>
       </Card>
+      </div>
     </div>
   );
 }
