@@ -4,13 +4,14 @@
 
 **Selected Approach:** Hybrid (Design System + Custom Branding)
 
-Drawing inspiration from modern job platforms like LinkedIn's clean information architecture and Upwork's gig marketplace patterns, combined with the vibrant, youth-focused aesthetic of platforms like Dribbble. The design emphasizes clarity and efficiency while maintaining visual appeal through the specified green, black, and purple color palette.
+Drawing inspiration from modern professional platforms like LinkedIn's clean information architecture and modern SaaS applications. The design emphasizes clarity, professionalism, and trustworthiness through a refined blue and slate color palette with full dark mode support.
 
 **Key Principles:**
 - Clean, professional layouts that inspire trust
-- Youth-oriented energy through vibrant accents
+- Modern, corporate-friendly aesthetic
 - Information hierarchy that makes gig discovery effortless
-- Approachable design that feels modern yet accessible
+- Accessible design with proper contrast in both light and dark modes
+- Sophisticated color palette suitable for professional environments
 
 ---
 

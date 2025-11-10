@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { Briefcase, LogOut, User } from 'lucide-react';
 import {
   DropdownMenu,
@@ -66,6 +67,8 @@ export function Navbar() {
                 </a>
               </Link>
 
+              <ThemeToggle />
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="hover-elevate active-elevate-2 rounded-full transition-all" data-testid="button-user-menu">
@@ -95,6 +98,7 @@ export function Navbar() {
 
           {!isAuthenticated && (
             <div className="flex items-center space-x-3">
+              <ThemeToggle />
               <Link href="/login">
                 <Button variant="ghost" data-testid="button-login">Login</Button>
               </Link>
