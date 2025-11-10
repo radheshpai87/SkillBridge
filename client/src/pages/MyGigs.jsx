@@ -25,10 +25,21 @@ export default function MyGigs() {
 
   const updateApplicationMutation = useMutation({
     mutationFn: async ({ applicationId, status }) => {
-      return apiRequest(`/api/applications/${applicationId}/status`, {
+      const response = await fetch(`/api/applications/${applicationId}/status`, {
         method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
         body: JSON.stringify({ status }),
       });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to update application status');
+      }
+      
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gigs/my'] });

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { UserModel, GigModel } from './models.js';
+import { UserModel, GigModel, ApplicationModel } from './models.js';
 import { connectDatabase } from './db.js';
 
 const sampleStudents = [
@@ -206,6 +206,7 @@ async function seedDatabase() {
     }
 
     console.log('💼 Creating gigs...');
+    const createdGigs = [];
     for (let i = 0; i < sampleGigs.length; i++) {
       const gigData = sampleGigs[i];
       const business = businesses[i % businesses.length];
@@ -215,27 +216,32 @@ async function seedDatabase() {
         postedBy: business._id,
         applicants: []
       });
+      createdGigs.push(gig);
       console.log(`   ✓ Created gig: ${gig.title}`);
     }
 
     console.log('🎯 Creating sample applications...');
-    const allGigs = await GigModel.find({});
     
-    for (let i = 0; i < Math.min(5, allGigs.length); i++) {
-      const gig = allGigs[i];
-      const numApplicants = Math.floor(Math.random() * 3) + 1;
+    for (let businessIndex = 0; businessIndex < businesses.length; businessIndex++) {
+      const businessGigs = createdGigs.filter((_, idx) => idx % businesses.length === businessIndex);
       
-      const applicantIndices = new Set();
-      while (applicantIndices.size < numApplicants && applicantIndices.size < students.length) {
-        applicantIndices.add(Math.floor(Math.random() * students.length));
+      for (const gig of businessGigs) {
+        const numApplicants = Math.min(2, students.length);
+        const selectedStudents = students.slice(0, numApplicants);
+        
+        for (const student of selectedStudents) {
+          await ApplicationModel.create({
+            gigId: gig._id,
+            studentId: student._id,
+            status: 'pending'
+          });
+        }
+        
+        gig.applicants = selectedStudents.map(s => s._id);
+        await gig.save();
+        
+        console.log(`   ✓ Added ${selectedStudents.length} applicant(s) to: ${gig.title}`);
       }
-      
-      for (const index of applicantIndices) {
-        gig.applicants.push(students[index]._id);
-      }
-      
-      await gig.save();
-      console.log(`   ✓ Added ${numApplicants} applicant(s) to: ${gig.title}`);
     }
 
     console.log('\n🎉 Database seeded successfully!');
