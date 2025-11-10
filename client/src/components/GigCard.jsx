@@ -2,33 +2,22 @@ import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, DollarSign, Briefcase } from 'lucide-react';
-import type { Gig, Application } from '@shared/types';
 
-interface GigCardProps {
-  gig;
-  onApply?: (gigId) => void;
-  onManage?: (gigId) => void;
-  applicationStatus?: Application['status'];
-  applicationId?;
-  isOwner?: boolean;
-  applicantCount?: number;
-}
-
-const statusVariants: Record<Application['status'], 'default' | 'secondary' | 'destructive' | 'outline'> = {
+const statusVariants = {
   pending: 'default',
   accepted: 'outline',
   rejected: 'destructive',
   completed: 'secondary',
 };
 
-const statusLabels: Record<Application['status'], string> = {
+const statusLabels = {
   pending: 'Pending',
   accepted: 'Accepted',
   rejected: 'Rejected',
   completed: 'Completed',
 };
 
-export function GigCard({ gig, onApply, onManage, applicationStatus, applicationId, isOwner, applicantCount }CardProps) {
+export function GigCard({ gig, onApply, onManage, applicationStatus, applicationId, isOwner, applicantCount }) {
   return (
     <Card className="hover-elevate transition-all duration-200 overflow-visible" data-testid={`card-gig-${gig.id}`}>
       <CardHeader className="space-y-3">

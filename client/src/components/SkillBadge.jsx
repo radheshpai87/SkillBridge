@@ -1,13 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 
-interface SkillBadgeProps {
-  skill;
-  onRemove;
-  variant?: 'default' | 'secondary' | 'outline';
-}
-
-export function SkillBadge({ skill, onRemove, variant = 'default' }: SkillBadgeProps) {
+export function SkillBadge({ skill, onRemove, variant = 'default' }) {
   return (
     <Badge
       variant={variant}

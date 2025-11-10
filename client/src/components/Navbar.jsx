@@ -20,7 +20,7 @@ export function Navbar() {
     setLocation('/login');
   };
 
-  const getInitials = (name: string) => {
+  const getInitials = (name) => {
     return name
       .split(' ')
       .map(n => n[0])

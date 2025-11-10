@@ -14,36 +14,24 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { CheckCircle, XCircle, User } from 'lucide-react';
-import type { Application, User as UserType } from '@shared/types';
 
-interface ManageGigDialogProps {
-  gigId: string | null;
-  gigTitle: string;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-interface ApplicationWithUser extends Application {
-  student?: UserType;
-}
-
-const statusVariants: Record<Application['status'], 'default' | 'secondary' | 'destructive' | 'outline'> = {
+const statusVariants = {
   pending: 'default',
   accepted: 'outline',
   rejected: 'destructive',
   completed: 'secondary',
 };
 
-export function ManageGigDialog({ gigId, gigTitle, open, onOpenChange }: ManageGigDialogProps) {
+export function ManageGigDialog({ gigId, gigTitle, open, onOpenChange }) {
   const { toast } = useToast();
 
-  const { data: applications, isLoading } = useQuery<ApplicationWithUser[]>({
+  const { data: applications, isLoading } = useQuery({
     queryKey: [`/api/applications/gig/${gigId}`],
     enabled: open && !!gigId,
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: async ({ applicationId, status }: { applicationId: string; status: Application['status'] }) => {
+    mutationFn: async ({ applicationId, status }) => {
       return apiRequest('PATCH', `/api/applications/${applicationId}/status`, { status });
     },
     onSuccess: () => {
@@ -64,11 +52,11 @@ export function ManageGigDialog({ gigId, gigTitle, open, onOpenChange }: ManageG
     },
   });
 
-  const handleAccept = (applicationId: string) => {
+  const handleAccept = (applicationId) => {
     updateStatusMutation.mutate({ applicationId, status: 'accepted' });
   };
 
-  const handleReject = (applicationId: string) => {
+  const handleReject = (applicationId) => {
     updateStatusMutation.mutate({ applicationId, status: 'rejected' });
   };
 

@@ -9,7 +9,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { Briefcase, TrendingUp, Users, CheckCircle } from 'lucide-react';
-import @shared/types"; '@shared/types';
 import { useMemo, useState } from 'react';
 
 export default function Dashboard() {
@@ -36,11 +35,11 @@ export default function Dashboard() {
     return myApplications.reduce((acc, app) => {
       acc[app.gigId] = app;
       return acc;
-    }, {} as Record<string, Application>);
+    }, {});
   }, [myApplications]);
 
   const applyMutation = useMutation({
-    mutationFn: async (gigId: string) => {
+    mutationFn: async (gigId) => {
       return apiRequest('POST', `/api/gigs/apply/${gigId}`);
     },
     onSuccess: () => {
@@ -69,15 +68,15 @@ export default function Dashboard() {
     const applicants = Array.isArray(gig.applicants) ? gig.applicants : [];
     acc[gig.id] = applicants.length;
     return acc;
-  }, {} as Record<string, number>);
+  }, {});
 
   const totalApplicants = Object.values(applicantCounts).reduce((sum, count) => sum + count, 0);
 
-  const handleApply = (gigId: string) => {
+  const handleApply = (gigId) => {
     applyMutation.mutate(gigId);
   };
 
-  const handleManage = (gigId: string) => {
+  const handleManage = (gigId) => {
     const gig = gigs?.find(g => g.id === gigId);
     if (gig) {
       setManageGig({ id: gig.id, title: gig.title });
@@ -121,7 +120,7 @@ export default function Dashboard() {
                   <div>
                     <h3 className="text-sm font-medium text-muted-foreground mb-3">Skills</h3>
                     <div className="flex flex-wrap gap-2">
-                      {userSkills.map((skill: string) => (
+                      {userSkills.map((skill) => (
                         <SkillBadge key={skill} skill={skill} />
                       ))}
                     </div>

@@ -11,7 +11,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { Briefcase, Plus, Search, DollarSign, MapPin } from 'lucide-react';
-import @shared/types"; '@shared/types';
 
 export default function BrowseGigs() {
   const { user } = useAuth();
@@ -39,11 +38,11 @@ export default function BrowseGigs() {
     return myApplications.reduce((acc, app) => {
       acc[app.gigId] = app;
       return acc;
-    }, {} as Record<string, Application>);
+    }, {});
   }, [myApplications]);
 
   const postGigMutation = useMutation({
-    mutationFn: async (data: typeof formData) => {
+    mutationFn: async (data) => {
       return apiRequest('POST', '/api/gigs/create', {
         ...data,
         budget: parseInt(data.budget),
@@ -68,7 +67,7 @@ export default function BrowseGigs() {
   });
 
   const applyMutation = useMutation({
-    mutationFn: async (gigId: string) => {
+    mutationFn: async (gigId) => {
       return apiRequest('POST', `/api/gigs/apply/${gigId}`);
     },
     onSuccess: () => {
@@ -94,7 +93,7 @@ export default function BrowseGigs() {
     postGigMutation.mutate(formData);
   };
 
-  const handleApply = (gigId: string) => {
+  const handleApply = (gigId) => {
     applyMutation.mutate(gigId);
   };
 
