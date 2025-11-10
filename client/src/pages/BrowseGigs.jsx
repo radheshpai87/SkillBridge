@@ -8,14 +8,23 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
-import { Briefcase, Plus, Search, DollarSign, MapPin } from 'lucide-react';
+import { Briefcase, Plus, Search, DollarSign, MapPin, X, SlidersHorizontal } from 'lucide-react';
 
 export default function BrowseGigs() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
+  const [minBudget, setMinBudget] = useState(0);
+  const [maxBudget, setMaxBudget] = useState(Infinity);
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState('all');
+  const [sortBy, setSortBy] = useState('recent');
   const [showPostForm, setShowPostForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -27,6 +36,15 @@ export default function BrowseGigs() {
   const { data: gigs, isLoading } = useQuery({
     queryKey: ['/api/gigs/all'],
   });
+
+  const budgetRange = useMemo(() => {
+    if (!gigs || gigs.length === 0) return { min: 0, max: 1000 };
+    const budgets = gigs.map(g => g.budget);
+    return {
+      min: Math.min(...budgets),
+      max: Math.max(...budgets)
+    };
+  }, [gigs]);
 
   const { data: myApplications } = useQuery({
     queryKey: ['/api/applications/my'],
@@ -97,19 +115,94 @@ export default function BrowseGigs() {
     applyMutation.mutate(gigId);
   };
 
-  const filteredGigs = gigs?.filter((gig) => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      gig.title.toLowerCase().includes(query) ||
-      gig.description.toLowerCase().includes(query) ||
-      gig.location.toLowerCase().includes(query)
-    );
-  }) || [];
+  const clearFilters = () => {
+    setSearchQuery('');
+    setMinBudget(budgetRange.min);
+    setMaxBudget(budgetRange.max);
+    setSelectedSkills([]);
+    setSelectedLocation('all');
+    setSortBy('recent');
+  };
 
-  const displayGigs = user?.role === 'student' 
-    ? filteredGigs.filter(g => g.postedBy !== user.id)
-    : filteredGigs;
+  const toggleSkill = (skill) => {
+    setSelectedSkills(prev => 
+      prev.includes(skill) 
+        ? prev.filter(s => s !== skill)
+        : [...prev, skill]
+    );
+  };
+
+  const availableLocations = useMemo(() => {
+    if (!gigs) return [];
+    const locations = new Set(gigs.map(g => g.location));
+    return Array.from(locations).sort();
+  }, [gigs]);
+
+  const availableSkills = useMemo(() => {
+    if (!gigs || user?.role !== 'student') return [];
+    const skills = new Set();
+    gigs.forEach(gig => {
+      const gigText = `${gig.title} ${gig.description}`.toLowerCase();
+      user.skills?.forEach(skill => {
+        if (gigText.includes(skill.toLowerCase())) {
+          skills.add(skill);
+        }
+      });
+    });
+    return Array.from(skills).sort();
+  }, [gigs, user]);
+
+  const filteredAndSortedGigs = useMemo(() => {
+    if (!gigs) return [];
+    
+    let filtered = gigs.filter((gig) => {
+      if (user?.role === 'student' && gig.postedBy === user.id) return false;
+      
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const matches = 
+          gig.title.toLowerCase().includes(query) ||
+          gig.description.toLowerCase().includes(query) ||
+          gig.location.toLowerCase().includes(query);
+        if (!matches) return false;
+      }
+      
+      if (gig.budget < minBudget || gig.budget > maxBudget) return false;
+      
+      if (selectedLocation !== 'all' && gig.location !== selectedLocation) return false;
+      
+      if (selectedSkills.length > 0) {
+        const gigText = `${gig.title} ${gig.description}`.toLowerCase();
+        const hasSkill = selectedSkills.some(skill => 
+          gigText.includes(skill.toLowerCase())
+        );
+        if (!hasSkill) return false;
+      }
+      
+      return true;
+    });
+    
+    if (sortBy === 'budget-high') {
+      filtered.sort((a, b) => b.budget - a.budget);
+    } else if (sortBy === 'budget-low') {
+      filtered.sort((a, b) => a.budget - b.budget);
+    } else if (sortBy === 'recent') {
+      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+    
+    return filtered;
+  }, [gigs, searchQuery, minBudget, maxBudget, selectedSkills, selectedLocation, sortBy, user]);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (searchQuery) count++;
+    if (minBudget > budgetRange.min || maxBudget < budgetRange.max) count++;
+    if (selectedSkills.length > 0) count++;
+    if (selectedLocation !== 'all') count++;
+    return count;
+  }, [searchQuery, minBudget, maxBudget, selectedSkills, selectedLocation, budgetRange]);
+
+  const displayGigs = filteredAndSortedGigs;
 
   if (!user) return null;
 
@@ -249,9 +342,10 @@ export default function BrowseGigs() {
           </Card>
         )}
 
-        {/* Search Bar (Student Only) */}
+        {/* Search and Filters (Student Only) */}
         {user.role === 'student' && (
-          <div className="mb-8">
+          <div className="mb-8 space-y-4">
+            {/* Search Bar */}
             <div className="relative max-w-2xl">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
@@ -261,6 +355,243 @@ export default function BrowseGigs() {
                 className="pl-12 h-14 text-base"
                 data-testid="input-search"
               />
+            </div>
+
+            {/* Desktop Filters */}
+            <div className="hidden md:block">
+              <Card className="overflow-visible">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4 flex-wrap">
+                    {/* Budget Range */}
+                    <div className="flex-1 min-w-64 space-y-2">
+                      <Label className="text-sm font-medium">Budget Range</Label>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 flex-1">
+                          <DollarSign className="w-4 h-4 text-muted-foreground" />
+                          <Input
+                            type="number"
+                            value={minBudget === Infinity ? budgetRange.min : minBudget}
+                            onChange={(e) => setMinBudget(parseInt(e.target.value) || budgetRange.min)}
+                            className="h-9"
+                            min={budgetRange.min}
+                            max={budgetRange.max}
+                            data-testid="input-min-budget"
+                          />
+                        </div>
+                        <span className="text-muted-foreground">to</span>
+                        <div className="flex items-center gap-2 flex-1">
+                          <DollarSign className="w-4 h-4 text-muted-foreground" />
+                          <Input
+                            type="number"
+                            value={maxBudget === Infinity ? budgetRange.max : maxBudget}
+                            onChange={(e) => setMaxBudget(parseInt(e.target.value) || budgetRange.max)}
+                            className="h-9"
+                            min={budgetRange.min}
+                            max={budgetRange.max}
+                            data-testid="input-max-budget"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Location Filter */}
+                    <div className="min-w-48 space-y-2">
+                      <Label className="text-sm font-medium">Location</Label>
+                      <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+                        <SelectTrigger className="h-9" data-testid="select-location">
+                          <SelectValue placeholder="All Locations" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Locations</SelectItem>
+                          {availableLocations.map(loc => (
+                            <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Sort By */}
+                    <div className="min-w-48 space-y-2">
+                      <Label className="text-sm font-medium">Sort By</Label>
+                      <Select value={sortBy} onValueChange={setSortBy}>
+                        <SelectTrigger className="h-9" data-testid="select-sort">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="recent">Most Recent</SelectItem>
+                          <SelectItem value="budget-high">Highest Budget</SelectItem>
+                          <SelectItem value="budget-low">Lowest Budget</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Skills Filter */}
+                  {availableSkills.length > 0 && (
+                    <div className="mt-4 pt-4 border-t space-y-2">
+                      <Label className="text-sm font-medium">Filter by Your Skills</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {availableSkills.map(skill => (
+                          <Badge
+                            key={skill}
+                            variant={selectedSkills.includes(skill) ? 'default' : 'outline'}
+                            className="cursor-pointer hover-elevate active-elevate-2"
+                            onClick={() => toggleSkill(skill)}
+                            data-testid={`badge-skill-${skill.toLowerCase().replace(/\s+/g, '-')}`}
+                          >
+                            {skill}
+                            {selectedSkills.includes(skill) && (
+                              <X className="w-3 h-3 ml-1" />
+                            )}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Active Filters and Clear */}
+                  {activeFilterCount > 0 && (
+                    <div className="mt-4 pt-4 border-t flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">
+                        {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} active
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearFilters}
+                        className="gap-2"
+                        data-testid="button-clear-filters"
+                      >
+                        <X className="w-4 h-4" />
+                        Clear Filters
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Mobile Filters Sheet */}
+            <div className="md:hidden">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" className="w-full gap-2" data-testid="button-open-filters">
+                    <SlidersHorizontal className="w-5 h-5" />
+                    Filters
+                    {activeFilterCount > 0 && (
+                      <Badge variant="secondary" className="ml-auto">
+                        {activeFilterCount}
+                      </Badge>
+                    )}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="bottom" className="h-[80vh] overflow-y-auto">
+                  <SheetHeader>
+                    <SheetTitle>Filter Gigs</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-6 space-y-6">
+                    {/* Budget Range */}
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium">Budget Range</Label>
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="w-4 h-4 text-muted-foreground" />
+                          <Input
+                            type="number"
+                            placeholder="Min"
+                            value={minBudget === Infinity ? budgetRange.min : minBudget}
+                            onChange={(e) => setMinBudget(parseInt(e.target.value) || budgetRange.min)}
+                            min={budgetRange.min}
+                            max={budgetRange.max}
+                          />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="w-4 h-4 text-muted-foreground" />
+                          <Input
+                            type="number"
+                            placeholder="Max"
+                            value={maxBudget === Infinity ? budgetRange.max : maxBudget}
+                            onChange={(e) => setMaxBudget(parseInt(e.target.value) || budgetRange.max)}
+                            min={budgetRange.min}
+                            max={budgetRange.max}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Location */}
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium">Location</Label>
+                      <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="All Locations" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Locations</SelectItem>
+                          {availableLocations.map(loc => (
+                            <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Sort By */}
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium">Sort By</Label>
+                      <Select value={sortBy} onValueChange={setSortBy}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="recent">Most Recent</SelectItem>
+                          <SelectItem value="budget-high">Highest Budget</SelectItem>
+                          <SelectItem value="budget-low">Lowest Budget</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Skills */}
+                    {availableSkills.length > 0 && (
+                      <div className="space-y-3">
+                        <Label className="text-sm font-medium">Filter by Your Skills</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {availableSkills.map(skill => (
+                            <Badge
+                              key={skill}
+                              variant={selectedSkills.includes(skill) ? 'default' : 'outline'}
+                              className="cursor-pointer hover-elevate active-elevate-2"
+                              onClick={() => toggleSkill(skill)}
+                            >
+                              {skill}
+                              {selectedSkills.includes(skill) && (
+                                <X className="w-3 h-3 ml-1" />
+                              )}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Clear Filters */}
+                    {activeFilterCount > 0 && (
+                      <Button
+                        variant="outline"
+                        onClick={clearFilters}
+                        className="w-full gap-2"
+                      >
+                        <X className="w-4 h-4" />
+                        Clear All Filters
+                      </Button>
+                    )}
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+
+            {/* Results Count */}
+            <div className="text-sm text-muted-foreground">
+              Showing {displayGigs.length} gig{displayGigs.length !== 1 ? 's' : ''}
+              {activeFilterCount > 0 && ' (filtered)'}
             </div>
           </div>
         )}
