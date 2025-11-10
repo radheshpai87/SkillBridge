@@ -11,7 +11,7 @@ import Register from "@/pages/Register";
 import Dashboard from "@/pages/Dashboard";
 import BrowseGigs from "@/pages/BrowseGigs";
 
-function ProtectedRoute({ component: Component }: { component: () => JSX.Element }) {
+function ProtectedRoute({ component: Component }) {
   const { isAuthenticated } = useAuth();
   
   if (!isAuthenticated) {
@@ -21,7 +21,7 @@ function ProtectedRoute({ component: Component }: { component: () => JSX.Element
   return <Component />;
 }
 
-function PublicRoute({ component: Component }: { component: () => JSX.Element }) {
+function PublicRoute({ component: Component }) {
   const { isAuthenticated } = useAuth();
   
   if (isAuthenticated) {

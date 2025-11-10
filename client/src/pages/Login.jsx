@@ -16,7 +16,7 @@ export default function Login() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -39,7 +39,7 @@ export default function Login() {
         description: `Logged in as ${data.user.name}`,
       });
       setLocation('/dashboard');
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: 'Login failed',
         description: error.message,

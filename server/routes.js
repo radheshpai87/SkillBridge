@@ -1,19 +1,11 @@
-import type { Express } from "express";
-import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { createServer } from "http";
+import { storage } from "./storage.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import type { Request, Response, NextFunction } from "express";
-import type { User } from "@shared/types";
 
 const JWT_SECRET = process.env.SESSION_SECRET || "your-secret-key-change-in-production";
 
-interface AuthRequest extends Request {
-  user?: User;
-}
-
-// Middleware to verify JWT token
-const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
+const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -22,7 +14,7 @@ const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunc
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+    const decoded = jwt.verify(token, JWT_SECRET);
     const user = await storage.getUser(decoded.userId);
     
     if (!user) {
@@ -36,15 +28,11 @@ const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunc
   }
 };
 
-export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth Routes
-  
-  // Register
-  app.post('/api/auth/register', async (req: Request, res: Response) => {
+export async function registerRoutes(app) {
+  app.post('/api/auth/register', async (req, res) => {
     try {
       const { name, email, password, role, skills, bio, companyName, description } = req.body;
 
-      // Validate required fields
       if (!name || !email || !password || !role) {
         return res.status(400).json({ message: 'Missing required fields' });
       }
@@ -53,16 +41,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Invalid role' });
       }
 
-      // Check if user already exists
       const existingUser = await storage.getUserByEmail(email);
       if (existingUser) {
         return res.status(400).json({ message: 'Email already registered' });
       }
 
-      // Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Create user
       const user = await storage.createUser({
         name,
         email,
@@ -74,10 +59,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         description,
       });
 
-      // Generate JWT token
       const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
 
-      // Don't send password back
       const { password: _, ...userWithoutPassword } = user;
 
       return res.status(201).json({ token, user: userWithoutPassword });
@@ -87,8 +70,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Login
-  app.post('/api/auth/login', async (req: Request, res: Response) => {
+  app.post('/api/auth/login', async (req, res) => {
     try {
       const { email, password } = req.body;
 
@@ -96,22 +78,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Email and password required' });
       }
 
-      // Find user
       const user = await storage.getUserByEmail(email);
       if (!user) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      // Verify password
       const isValidPassword = await bcrypt.compare(password, user.password);
       if (!isValidPassword) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      // Generate JWT token
       const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
 
-      // Don't send password back
       const { password: _, ...userWithoutPassword } = user;
 
       return res.status(200).json({ token, user: userWithoutPassword });
@@ -121,19 +99,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get current user
-  app.get('/api/auth/me', authenticateToken, async (req: AuthRequest, res: Response) => {
-    const { password: _, ...userWithoutPassword } = req.user!;
+  app.get('/api/auth/me', authenticateToken, async (req, res) => {
+    const { password: _, ...userWithoutPassword } = req.user;
     return res.json(userWithoutPassword);
   });
 
-  // Update profile
-  app.patch('/api/profile/update', authenticateToken, async (req: AuthRequest, res: Response) => {
+  app.patch('/api/profile/update', authenticateToken, async (req, res) => {
     try {
       const { name, bio, skills, companyName, description } = req.body;
-      const userId = req.user!.id;
+      const userId = req.user.id;
 
-      const updates: Partial<User> = {};
+      const updates = {};
       if (name) updates.name = name;
       if (bio !== undefined) updates.bio = bio;
       if (skills) updates.skills = skills;
@@ -154,12 +130,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Gig Routes
-
-  // Create gig (business only)
-  app.post('/api/gigs/create', authenticateToken, async (req: AuthRequest, res: Response) => {
+  app.post('/api/gigs/create', authenticateToken, async (req, res) => {
     try {
-      const user = req.user!;
+      const user = req.user;
 
       if (user.role !== 'business') {
         return res.status(403).json({ message: 'Only businesses can post gigs' });
@@ -186,8 +159,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get all gigs
-  app.get('/api/gigs/all', async (req: Request, res: Response) => {
+  app.get('/api/gigs/all', async (req, res) => {
     try {
       const gigs = await storage.getAllGigs();
       return res.json(gigs);
@@ -197,10 +169,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get matched gigs (student only - keyword matching based on skills)
-  app.get('/api/gigs/matched', authenticateToken, async (req: AuthRequest, res: Response) => {
+  app.get('/api/gigs/matched', authenticateToken, async (req, res) => {
     try {
-      const user = req.user!;
+      const user = req.user;
 
       if (user.role !== 'student') {
         return res.status(403).json({ message: 'Only students can view matched gigs' });
@@ -213,10 +184,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json([]);
       }
 
-      // Simple keyword matching: check if any skill appears in gig title or description
       const matchedGigs = allGigs.filter(gig => {
         const searchText = `${gig.title} ${gig.description}`.toLowerCase();
-        return userSkills.some((skill: string) => 
+        return userSkills.some((skill) => 
           searchText.includes(skill.toLowerCase())
         );
       });
@@ -228,10 +198,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Apply to gig (student only) - creates Application document
-  app.post('/api/gigs/apply/:gigId', authenticateToken, async (req: AuthRequest, res: Response) => {
+  app.post('/api/gigs/apply/:gigId', authenticateToken, async (req, res) => {
     try {
-      const user = req.user!;
+      const user = req.user;
       const { gigId } = req.params;
 
       if (user.role !== 'student') {
@@ -243,19 +212,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: 'Gig not found' });
       }
 
-      // Check if already applied
       const existingApplication = await storage.getApplicationByGigAndStudent(gigId, user.id);
       if (existingApplication) {
         return res.status(400).json({ message: 'Already applied to this gig' });
       }
 
-      // Create application
       const application = await storage.createApplication({
         gigId,
         studentId: user.id,
       });
 
-      // Also add to gig's applicants array for backwards compatibility
       const updatedApplicants = [...gig.applicants, user.id];
       await storage.updateGig(gigId, {
         applicants: updatedApplicants,
@@ -268,8 +234,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get gig by ID
-  app.get('/api/gigs/:gigId', async (req: Request, res: Response) => {
+  app.get('/api/gigs/:gigId', async (req, res) => {
     try {
       const { gigId } = req.params;
       const gig = await storage.getGig(gigId);
@@ -285,10 +250,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Delete gig (business owner only)
-  app.delete('/api/gigs/:gigId', authenticateToken, async (req: AuthRequest, res: Response) => {
+  app.delete('/api/gigs/:gigId', authenticateToken, async (req, res) => {
     try {
-      const user = req.user!;
+      const user = req.user;
       const { gigId } = req.params;
 
       const gig = await storage.getGig(gigId);
@@ -308,12 +272,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Application Routes
-
-  // Get applications for a gig (business owner only)
-  app.get('/api/applications/gig/:gigId', authenticateToken, async (req: AuthRequest, res: Response) => {
+  app.get('/api/applications/gig/:gigId', authenticateToken, async (req, res) => {
     try {
-      const user = req.user!;
+      const user = req.user;
       const { gigId } = req.params;
 
       const gig = await storage.getGig(gigId);
@@ -333,10 +294,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get applications for current student
-  app.get('/api/applications/my', authenticateToken, async (req: AuthRequest, res: Response) => {
+  app.get('/api/applications/my', authenticateToken, async (req, res) => {
     try {
-      const user = req.user!;
+      const user = req.user;
 
       if (user.role !== 'student') {
         return res.status(403).json({ message: 'Only students can view their applications' });
@@ -350,10 +310,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update application status (business owner only)
-  app.patch('/api/applications/:id/status', authenticateToken, async (req: AuthRequest, res: Response) => {
+  app.patch('/api/applications/:id/status', authenticateToken, async (req, res) => {
     try {
-      const user = req.user!;
+      const user = req.user;
       const { id } = req.params;
       const { status } = req.body;
 

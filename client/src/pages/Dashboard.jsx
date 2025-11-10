@@ -9,24 +9,24 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { Briefcase, TrendingUp, Users, CheckCircle } from 'lucide-react';
-import type { Gig, Application } from '@shared/types';
+import @shared/types"; '@shared/types';
 import { useMemo, useState } from 'react';
 
 export default function Dashboard() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [manageGig, setManageGig] = useState<{ id: string; title: string } | null>(null);
+  const [manageGig, setManageGig] = useState(null);
 
-  const { data: gigs, isLoading } = useQuery<Gig[]>({
+  const { data: gigs, isLoading } = useQuery({
     queryKey: ['/api/gigs/all'],
   });
 
-  const { data: matchedGigs } = useQuery<Gig[]>({
+  const { data: matchedGigs } = useQuery({
     queryKey: ['/api/gigs/matched'],
     enabled: user?.role === 'student',
   });
 
-  const { data: myApplications } = useQuery<Application[]>({
+  const { data: myApplications } = useQuery({
     queryKey: ['/api/applications/my'],
     enabled: user?.role === 'student',
   });

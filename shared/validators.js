@@ -36,9 +36,3 @@ export const updateProfileSchema = z.object({
 export const updateApplicationStatusSchema = z.object({
   status: z.enum(['pending', 'accepted', 'rejected', 'completed']),
 });
-
-export type RegisterInput = z.infer<typeof registerSchema>;
-export type LoginInput = z.infer<typeof loginSchema>;
-export type GigInput = z.infer<typeof gigSchema>;
-export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
-export type UpdateApplicationStatusInput = z.infer<typeof updateApplicationStatusSchema>;

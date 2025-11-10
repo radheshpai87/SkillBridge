@@ -15,8 +15,8 @@ export default function Register() {
     name: '',
     email: '',
     password: '',
-    role: 'student' as 'student' | 'business',
-    skills: [] as string[],
+    role: 'student',
+    skills: [],
     bio: '',
     companyName: '',
     description: '',
@@ -37,14 +37,14 @@ export default function Register() {
     }
   };
 
-  const handleRemoveSkill = (skill: string) => {
+  const handleRemoveSkill = (skill) => {
     setFormData({
       ...formData,
       skills: formData.skills.filter(s => s !== skill),
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -67,7 +67,7 @@ export default function Register() {
         description: 'Welcome to SkillBridge',
       });
       setLocation('/dashboard');
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: 'Registration failed',
         description: error.message,
@@ -97,7 +97,6 @@ export default function Register() {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Role Selection */}
             <div className="space-y-3">
               <label className="text-sm font-medium text-foreground">I am a...</label>
               <div className="grid grid-cols-2 gap-4">
@@ -137,7 +136,6 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Common Fields */}
             <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label htmlFor="name" className="text-sm font-medium text-foreground">
@@ -197,7 +195,6 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Student-specific fields */}
             {formData.role === 'student' && (
               <>
                 <div className="space-y-2">
@@ -252,7 +249,6 @@ export default function Register() {
               </>
             )}
 
-            {/* Business-specific fields */}
             {formData.role === 'business' && (
               <>
                 <div className="space-y-2">

@@ -34,7 +34,7 @@ const gigSchema = new mongoose.Schema({
     transform: function(doc, ret) {
       ret.id = ret._id.toString();
       ret.postedBy = ret.postedBy.toString();
-      ret.applicants = ret.applicants.map((id: mongoose.Types.ObjectId) => id.toString());
+      ret.applicants = ret.applicants.map((id) => id.toString());
       delete ret._id;
       delete ret.__v;
       return ret;

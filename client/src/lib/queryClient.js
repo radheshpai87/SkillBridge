@@ -1,9 +1,9 @@
 import { QueryClient } from "@tanstack/react-query";
 
-async function fetchWithAuth(url: string, options: RequestInit = {}) {
+async function fetchWithAuth(url, options = {}) {
   const token = localStorage.getItem('token');
   
-  const headers: Record<string, string> = {
+  const headers = {
     'Content-Type': 'application/json',
   };
 
@@ -11,7 +11,6 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  // Merge with provided headers
   if (options.headers) {
     Object.assign(headers, options.headers);
   }
@@ -29,10 +28,10 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
   return response.json();
 }
 
-export async function apiRequest(method: string, url: string, data?: any) {
+export async function apiRequest(method, url, data) {
   const token = localStorage.getItem('token');
   
-  const headers: Record<string, string> = {
+  const headers = {
     'Content-Type': 'application/json',
   };
 
@@ -58,10 +57,10 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: async ({ queryKey }) => {
-        const url = queryKey[0] as string;
+        const url = queryKey[0];
         return fetchWithAuth(url);
       },
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      staleTime: 1000 * 60 * 5,
       retry: 1,
     },
   },

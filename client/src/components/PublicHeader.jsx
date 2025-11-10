@@ -4,7 +4,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { Briefcase } from 'lucide-react';
 
 interface PublicHeaderProps {
-  showCTA?: boolean;
+  showCTA?;
 }
 
 export function PublicHeader({ showCTA = true }: PublicHeaderProps) {

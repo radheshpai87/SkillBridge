@@ -11,7 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { Briefcase, Plus, Search, DollarSign, MapPin } from 'lucide-react';
-import type { Gig, Application } from '@shared/types';
+import @shared/types"; '@shared/types';
 
 export default function BrowseGigs() {
   const { user } = useAuth();
@@ -25,11 +25,11 @@ export default function BrowseGigs() {
     location: '',
   });
 
-  const { data: gigs, isLoading } = useQuery<Gig[]>({
+  const { data: gigs, isLoading } = useQuery({
     queryKey: ['/api/gigs/all'],
   });
 
-  const { data: myApplications } = useQuery<Application[]>({
+  const { data: myApplications } = useQuery({
     queryKey: ['/api/applications/my'],
     enabled: user?.role === 'student',
   });
@@ -89,7 +89,7 @@ export default function BrowseGigs() {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     postGigMutation.mutate(formData);
   };

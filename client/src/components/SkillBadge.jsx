@@ -2,8 +2,8 @@ import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 
 interface SkillBadgeProps {
-  skill: string;
-  onRemove?: () => void;
+  skill;
+  onRemove;
   variant?: 'default' | 'secondary' | 'outline';
 }
 

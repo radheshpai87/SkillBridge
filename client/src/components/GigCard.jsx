@@ -5,11 +5,11 @@ import { MapPin, DollarSign, Briefcase } from 'lucide-react';
 import type { Gig, Application } from '@shared/types';
 
 interface GigCardProps {
-  gig: Gig;
-  onApply?: (gigId: string) => void;
-  onManage?: (gigId: string) => void;
+  gig;
+  onApply?: (gigId) => void;
+  onManage?: (gigId) => void;
   applicationStatus?: Application['status'];
-  applicationId?: string;
+  applicationId?;
   isOwner?: boolean;
   applicantCount?: number;
 }
@@ -28,7 +28,7 @@ const statusLabels: Record<Application['status'], string> = {
   completed: 'Completed',
 };
 
-export function GigCard({ gig, onApply, onManage, applicationStatus, applicationId, isOwner, applicantCount }: GigCardProps) {
+export function GigCard({ gig, onApply, onManage, applicationStatus, applicationId, isOwner, applicantCount }CardProps) {
   return (
     <Card className="hover-elevate transition-all duration-200 overflow-visible" data-testid={`card-gig-${gig.id}`}>
       <CardHeader className="space-y-3">
