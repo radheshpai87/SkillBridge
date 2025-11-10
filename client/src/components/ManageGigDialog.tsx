@@ -38,7 +38,7 @@ export function ManageGigDialog({ gigId, gigTitle, open, onOpenChange }: ManageG
   const { toast } = useToast();
 
   const { data: applications, isLoading } = useQuery<ApplicationWithUser[]>({
-    queryKey: ['/api/applications/gig', gigId],
+    queryKey: [`/api/applications/gig/${gigId}`],
     enabled: open && !!gigId,
   });
 
@@ -47,7 +47,7 @@ export function ManageGigDialog({ gigId, gigTitle, open, onOpenChange }: ManageG
       return apiRequest('PATCH', `/api/applications/${applicationId}/status`, { status });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/applications/gig', gigId] });
+      queryClient.invalidateQueries({ queryKey: [`/api/applications/gig/${gigId}`] });
       queryClient.invalidateQueries({ queryKey: ['/api/applications/my'] });
       queryClient.invalidateQueries({ queryKey: ['/api/gigs/all'] });
       toast({

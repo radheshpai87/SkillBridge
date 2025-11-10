@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Navbar } from '@/components/Navbar';
@@ -11,7 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { Briefcase, Plus, Search, DollarSign, MapPin } from 'lucide-react';
-import type { Gig } from '@shared/types';
+import type { Gig, Application } from '@shared/types';
 
 export default function BrowseGigs() {
   const { user } = useAuth();
@@ -28,6 +28,19 @@ export default function BrowseGigs() {
   const { data: gigs, isLoading } = useQuery<Gig[]>({
     queryKey: ['/api/gigs/all'],
   });
+
+  const { data: myApplications } = useQuery<Application[]>({
+    queryKey: ['/api/applications/my'],
+    enabled: user?.role === 'student',
+  });
+
+  const applicationsByGig = useMemo(() => {
+    if (!myApplications) return {};
+    return myApplications.reduce((acc, app) => {
+      acc[app.gigId] = app;
+      return acc;
+    }, {} as Record<string, Application>);
+  }, [myApplications]);
 
   const postGigMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -61,6 +74,7 @@ export default function BrowseGigs() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gigs/all'] });
       queryClient.invalidateQueries({ queryKey: ['/api/gigs/matched'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/applications/my'] });
       toast({
         title: 'Application submitted!',
         description: 'The business will review your application.',
@@ -273,12 +287,14 @@ export default function BrowseGigs() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {displayGigs.map((gig) => {
                 const applicants = Array.isArray(gig.applicants) ? gig.applicants : [];
+                const application = user.role === 'student' ? applicationsByGig[gig.id] : undefined;
                 return (
                   <GigCard
                     key={gig.id}
                     gig={gig}
                     onApply={user.role === 'student' ? handleApply : undefined}
-                    isApplied={user.role === 'student' && applicants.includes(user.id)}
+                    applicationStatus={application?.status}
+                    applicationId={application?.id}
                     isOwner={user.role === 'business' && gig.postedBy === user.id}
                     applicantCount={user.role === 'business' ? applicants.length : undefined}
                   />
