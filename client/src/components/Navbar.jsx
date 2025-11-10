@@ -2,7 +2,7 @@ import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { Briefcase, LogOut, User } from 'lucide-react';
+import { Briefcase, LogOut, User, ClipboardList } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -66,6 +66,19 @@ export function Navbar() {
                   {user.role === 'business' ? 'Post Gig' : 'Browse Gigs'}
                 </a>
               </Link>
+
+              {user.role === 'student' && (
+                <Link href="/my-applications">
+                  <a
+                    className={`px-4 py-2 rounded-lg font-medium transition-all hover-elevate active-elevate-2 ${
+                      location === '/my-applications' ? 'bg-accent text-accent-foreground' : 'text-foreground'
+                    }`}
+                    data-testid="link-my-applications"
+                  >
+                    My Applications
+                  </a>
+                </Link>
+              )}
 
               <ThemeToggle />
 

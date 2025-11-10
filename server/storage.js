@@ -84,6 +84,22 @@ export class MongoStorage {
     };
   }
 
+  transformPublicUser(doc) {
+    const id = doc._id ? doc._id.toString() : doc.id;
+    return {
+      id,
+      name: doc.name,
+      email: doc.email,
+      role: doc.role,
+      skills: doc.skills || [],
+      bio: doc.bio,
+      companyName: doc.companyName,
+      description: doc.description,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
+    };
+  }
+
   transformGig(doc) {
     const id = doc._id ? doc._id.toString() : doc.id;
     const postedBy = doc.postedBy && typeof doc.postedBy === 'object' ? doc.postedBy.toString() : doc.postedBy;
@@ -112,23 +128,43 @@ export class MongoStorage {
     if (!mongoose.Types.ObjectId.isValid(gigId)) return [];
     const applications = await ApplicationModel.find({ gigId }).lean();
     
-    const applicationsWithStudent = await Promise.all(
-      applications.map(async (app) => {
-        const student = await UserModel.findById(app.studentId).lean();
-        return {
-          ...this.transformApplication(app),
-          student: student ? this.transformUser(student) : undefined,
-        };
-      })
-    );
+    const studentIds = [...new Set(applications.map(app => app.studentId))];
+    const students = await UserModel.find({ _id: { $in: studentIds } }).lean();
+    const studentsMap = new Map(students.map(user => [user._id.toString(), this.transformPublicUser(user)]));
     
-    return applicationsWithStudent;
+    return applications.map(app => ({
+      ...this.transformApplication(app),
+      student: studentsMap.get(app.studentId.toString()),
+    }));
   }
 
   async getApplicationsByStudent(studentId) {
     if (!mongoose.Types.ObjectId.isValid(studentId)) return [];
+    
     const applications = await ApplicationModel.find({ studentId }).lean();
-    return applications.map(app => this.transformApplication(app));
+    
+    if (applications.length === 0) return [];
+    
+    const gigIds = [...new Set(applications.map(app => app.gigId))];
+    const gigs = await GigModel.find({ _id: { $in: gigIds } }).lean();
+    const gigsMap = new Map(gigs.map(gig => [gig._id.toString(), this.transformGig(gig)]));
+    
+    const businessIds = [...new Set(gigs.map(gig => gig.postedBy))];
+    const businesses = await UserModel.find({ _id: { $in: businessIds } }).lean();
+    const businessesMap = new Map(businesses.map(user => [user._id.toString(), this.transformPublicUser(user)]));
+    
+    return applications.map(app => {
+      const transformedApp = this.transformApplication(app);
+      const gig = gigsMap.get(app.gigId.toString());
+      if (gig) {
+        transformedApp.gig = gig;
+        const business = businessesMap.get(gig.postedBy);
+        if (business) {
+          transformedApp.gig.postedByUser = business;
+        }
+      }
+      return transformedApp;
+    });
   }
 
   async createApplication(insertApplication) {

@@ -10,6 +10,7 @@ import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Dashboard from "@/pages/Dashboard";
 import BrowseGigs from "@/pages/BrowseGigs";
+import MyApplications from "@/pages/MyApplications";
 
 function ProtectedRoute({ component: Component }) {
   const { isAuthenticated } = useAuth();
@@ -46,6 +47,9 @@ function Router() {
       </Route>
       <Route path="/browse">
         <ProtectedRoute component={BrowseGigs} />
+      </Route>
+      <Route path="/my-applications">
+        <ProtectedRoute component={MyApplications} />
       </Route>
       <Route component={NotFound} />
     </Switch>
