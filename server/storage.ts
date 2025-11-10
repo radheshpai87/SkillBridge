@@ -1,5 +1,5 @@
-import type { User, Gig } from "@shared/types";
-import { UserModel, GigModel } from "./models";
+import type { User, Gig, Application } from "@shared/types";
+import { UserModel, GigModel, ApplicationModel } from "./models";
 import mongoose from "mongoose";
 
 export interface IStorage {
@@ -16,6 +16,14 @@ export interface IStorage {
   createGig(gig: Omit<Gig, 'id' | 'applicants'> & { postedBy: string }): Promise<Gig>;
   updateGig(id: string, updates: Partial<Gig>): Promise<Gig | undefined>;
   deleteGig(id: string): Promise<boolean>;
+  
+  // Application operations
+  getApplication(id: string): Promise<Application | undefined>;
+  getApplicationsByGig(gigId: string): Promise<Application[]>;
+  getApplicationsByStudent(studentId: string): Promise<Application[]>;
+  createApplication(application: Omit<Application, 'id' | 'status'>): Promise<Application>;
+  updateApplicationStatus(id: string, status: Application['status']): Promise<Application | undefined>;
+  getApplicationByGigAndStudent(gigId: string, studentId: string): Promise<Application | undefined>;
 }
 
 export class MongoStorage implements IStorage {
@@ -117,6 +125,76 @@ export class MongoStorage implements IStorage {
       applicants: doc.applicants ? doc.applicants.map((id: any) => 
         typeof id === 'object' ? id.toString() : id
       ) : [],
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
+    };
+  }
+
+  // Application operations
+  async getApplication(id: string): Promise<Application | undefined> {
+    if (!mongoose.Types.ObjectId.isValid(id)) return undefined;
+    const application = await ApplicationModel.findById(id).lean();
+    return application ? this.transformApplication(application) : undefined;
+  }
+
+  async getApplicationsByGig(gigId: string): Promise<any[]> {
+    if (!mongoose.Types.ObjectId.isValid(gigId)) return [];
+    const applications = await ApplicationModel.find({ gigId }).lean();
+    
+    const applicationsWithStudent = await Promise.all(
+      applications.map(async (app) => {
+        const student = await UserModel.findById(app.studentId).lean();
+        return {
+          ...this.transformApplication(app),
+          student: student ? this.transformUser(student) : undefined,
+        };
+      })
+    );
+    
+    return applicationsWithStudent;
+  }
+
+  async getApplicationsByStudent(studentId: string): Promise<Application[]> {
+    if (!mongoose.Types.ObjectId.isValid(studentId)) return [];
+    const applications = await ApplicationModel.find({ studentId }).lean();
+    return applications.map(app => this.transformApplication(app));
+  }
+
+  async createApplication(insertApplication: Omit<Application, 'id' | 'status'>): Promise<Application> {
+    const application = await ApplicationModel.create({
+      ...insertApplication,
+      status: 'pending',
+    });
+    return this.transformApplication(application.toObject());
+  }
+
+  async updateApplicationStatus(id: string, status: Application['status']): Promise<Application | undefined> {
+    if (!mongoose.Types.ObjectId.isValid(id)) return undefined;
+    const application = await ApplicationModel.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    ).lean();
+    return application ? this.transformApplication(application) : undefined;
+  }
+
+  async getApplicationByGigAndStudent(gigId: string, studentId: string): Promise<Application | undefined> {
+    if (!mongoose.Types.ObjectId.isValid(gigId) || !mongoose.Types.ObjectId.isValid(studentId)) {
+      return undefined;
+    }
+    const application = await ApplicationModel.findOne({ gigId, studentId }).lean();
+    return application ? this.transformApplication(application) : undefined;
+  }
+
+  private transformApplication(doc: any): Application {
+    const id = doc._id ? doc._id.toString() : doc.id;
+    const gigId = doc.gigId && typeof doc.gigId === 'object' ? doc.gigId.toString() : doc.gigId;
+    const studentId = doc.studentId && typeof doc.studentId === 'object' ? doc.studentId.toString() : doc.studentId;
+    return {
+      id,
+      gigId,
+      studentId,
+      status: doc.status,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     };

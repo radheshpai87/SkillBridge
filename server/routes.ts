@@ -228,7 +228,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Apply to gig (student only)
+  // Apply to gig (student only) - creates Application document
   app.post('/api/gigs/apply/:gigId', authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const user = req.user!;
@@ -244,19 +244,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Check if already applied
-      if (gig.applicants.includes(user.id)) {
+      const existingApplication = await storage.getApplicationByGigAndStudent(gigId, user.id);
+      if (existingApplication) {
         return res.status(400).json({ message: 'Already applied to this gig' });
       }
 
-      // Add applicant
-      const updatedApplicants = [...gig.applicants, user.id];
+      // Create application
+      const application = await storage.createApplication({
+        gigId,
+        studentId: user.id,
+      });
 
-      // Update gig
-      const updatedGig = await storage.updateGig(gigId, {
+      // Also add to gig's applicants array for backwards compatibility
+      const updatedApplicants = [...gig.applicants, user.id];
+      await storage.updateGig(gigId, {
         applicants: updatedApplicants,
       });
 
-      return res.json(updatedGig);
+      return res.json(application);
     } catch (error) {
       console.error('Apply to gig error:', error);
       return res.status(500).json({ message: 'Failed to apply to gig' });
@@ -300,6 +305,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Delete gig error:', error);
       return res.status(500).json({ message: 'Failed to delete gig' });
+    }
+  });
+
+  // Application Routes
+
+  // Get applications for a gig (business owner only)
+  app.get('/api/applications/gig/:gigId', authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const user = req.user!;
+      const { gigId } = req.params;
+
+      const gig = await storage.getGig(gigId);
+      if (!gig) {
+        return res.status(404).json({ message: 'Gig not found' });
+      }
+
+      if (gig.postedBy !== user.id) {
+        return res.status(403).json({ message: 'Not authorized to view applications' });
+      }
+
+      const applications = await storage.getApplicationsByGig(gigId);
+      return res.json(applications);
+    } catch (error) {
+      console.error('Get applications error:', error);
+      return res.status(500).json({ message: 'Failed to fetch applications' });
+    }
+  });
+
+  // Get applications for current student
+  app.get('/api/applications/my', authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const user = req.user!;
+
+      if (user.role !== 'student') {
+        return res.status(403).json({ message: 'Only students can view their applications' });
+      }
+
+      const applications = await storage.getApplicationsByStudent(user.id);
+      return res.json(applications);
+    } catch (error) {
+      console.error('Get my applications error:', error);
+      return res.status(500).json({ message: 'Failed to fetch applications' });
+    }
+  });
+
+  // Update application status (business owner only)
+  app.patch('/api/applications/:id/status', authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const user = req.user!;
+      const { id } = req.params;
+      const { status } = req.body;
+
+      if (!['pending', 'accepted', 'rejected', 'completed'].includes(status)) {
+        return res.status(400).json({ message: 'Invalid status' });
+      }
+
+      const application = await storage.getApplication(id);
+      if (!application) {
+        return res.status(404).json({ message: 'Application not found' });
+      }
+
+      const gig = await storage.getGig(application.gigId);
+      if (!gig || gig.postedBy !== user.id) {
+        return res.status(403).json({ message: 'Not authorized to update this application' });
+      }
+
+      const updatedApplication = await storage.updateApplicationStatus(id, status);
+      return res.json(updatedApplication);
+    } catch (error) {
+      console.error('Update application status error:', error);
+      return res.status(500).json({ message: 'Failed to update application status' });
     }
   });
 

@@ -2,18 +2,33 @@ import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, DollarSign, Briefcase } from 'lucide-react';
-import type { Gig } from '@shared/types';
+import type { Gig, Application } from '@shared/types';
 
 interface GigCardProps {
   gig: Gig;
   onApply?: (gigId: string) => void;
   onManage?: (gigId: string) => void;
-  isApplied?: boolean;
+  applicationStatus?: Application['status'];
+  applicationId?: string;
   isOwner?: boolean;
   applicantCount?: number;
 }
 
-export function GigCard({ gig, onApply, onManage, isApplied, isOwner, applicantCount }: GigCardProps) {
+const statusVariants: Record<Application['status'], 'default' | 'secondary' | 'destructive' | 'outline'> = {
+  pending: 'default',
+  accepted: 'outline',
+  rejected: 'destructive',
+  completed: 'secondary',
+};
+
+const statusLabels: Record<Application['status'], string> = {
+  pending: 'Pending',
+  accepted: 'Accepted',
+  rejected: 'Rejected',
+  completed: 'Completed',
+};
+
+export function GigCard({ gig, onApply, onManage, applicationStatus, applicationId, isOwner, applicantCount }: GigCardProps) {
   return (
     <Card className="hover-elevate transition-all duration-200 overflow-visible" data-testid={`card-gig-${gig.id}`}>
       <CardHeader className="space-y-3">
@@ -21,10 +36,21 @@ export function GigCard({ gig, onApply, onManage, isApplied, isOwner, applicantC
           <h3 className="text-xl font-semibold text-foreground line-clamp-2" data-testid={`text-gig-title-${gig.id}`}>
             {gig.title}
           </h3>
-          <Badge variant="secondary" className="shrink-0 font-semibold">
-            <DollarSign className="w-3 h-3" />
-            {gig.budget}
-          </Badge>
+          <div className="flex gap-2 shrink-0">
+            {applicationStatus && (
+              <Badge 
+                variant={statusVariants[applicationStatus]} 
+                className={applicationStatus === 'accepted' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 border-green-300 dark:border-green-700' : ''}
+                data-testid={`badge-status-${gig.id}`}
+              >
+                {statusLabels[applicationStatus]}
+              </Badge>
+            )}
+            <Badge variant="secondary" className="font-semibold">
+              <DollarSign className="w-3 h-3" />
+              {gig.budget}
+            </Badge>
+          </div>
         </div>
       </CardHeader>
 
@@ -61,11 +87,16 @@ export function GigCard({ gig, onApply, onManage, isApplied, isOwner, applicantC
         ) : (
           <Button
             onClick={() => onApply?.(gig.id)}
-            disabled={isApplied}
+            disabled={!!applicationStatus}
             className="w-full"
             data-testid={`button-apply-${gig.id}`}
           >
-            {isApplied ? 'Already Applied' : 'Apply Now'}
+            {applicationStatus ? 
+              (applicationStatus === 'accepted' ? 'Accepted ✓' : 
+               applicationStatus === 'rejected' ? 'Rejected' :
+               applicationStatus === 'completed' ? 'Completed' :
+               'Applied') 
+              : 'Apply Now'}
           </Button>
         )}
       </CardFooter>

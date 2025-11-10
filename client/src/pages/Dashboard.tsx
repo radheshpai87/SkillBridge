@@ -3,16 +3,19 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { Navbar } from '@/components/Navbar';
 import { GigCard } from '@/components/GigCard';
 import { SkillBadge } from '@/components/SkillBadge';
+import { ManageGigDialog } from '@/components/ManageGigDialog';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { Briefcase, TrendingUp, Users, CheckCircle } from 'lucide-react';
-import type { Gig } from '@shared/types';
+import type { Gig, Application } from '@shared/types';
+import { useMemo, useState } from 'react';
 
 export default function Dashboard() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [manageGig, setManageGig] = useState<{ id: string; title: string } | null>(null);
 
   const { data: gigs, isLoading } = useQuery<Gig[]>({
     queryKey: ['/api/gigs/all'],
@@ -23,6 +26,19 @@ export default function Dashboard() {
     enabled: user?.role === 'student',
   });
 
+  const { data: myApplications } = useQuery<Application[]>({
+    queryKey: ['/api/applications/my'],
+    enabled: user?.role === 'student',
+  });
+
+  const applicationsByGig = useMemo(() => {
+    if (!myApplications) return {};
+    return myApplications.reduce((acc, app) => {
+      acc[app.gigId] = app;
+      return acc;
+    }, {} as Record<string, Application>);
+  }, [myApplications]);
+
   const applyMutation = useMutation({
     mutationFn: async (gigId: string) => {
       return apiRequest('POST', `/api/gigs/apply/${gigId}`);
@@ -30,6 +46,7 @@ export default function Dashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gigs/all'] });
       queryClient.invalidateQueries({ queryKey: ['/api/gigs/matched'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/applications/my'] });
       toast({
         title: 'Application submitted!',
         description: 'The business will review your application.',
@@ -58,6 +75,13 @@ export default function Dashboard() {
 
   const handleApply = (gigId: string) => {
     applyMutation.mutate(gigId);
+  };
+
+  const handleManage = (gigId: string) => {
+    const gig = gigs?.find(g => g.id === gigId);
+    if (gig) {
+      setManageGig({ id: gig.id, title: gig.title });
+    }
   };
 
   return (
@@ -136,13 +160,14 @@ export default function Dashboard() {
               ) : matchedGigs && matchedGigs.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {matchedGigs.map((gig) => {
-                    const applicants = Array.isArray(gig.applicants) ? gig.applicants : [];
+                    const application = applicationsByGig[gig.id];
                     return (
                       <GigCard
                         key={gig.id}
                         gig={gig}
                         onApply={handleApply}
-                        isApplied={applicants.includes(user.id)}
+                        applicationStatus={application?.status}
+                        applicationId={application?.id}
                       />
                     );
                   })}
@@ -251,6 +276,7 @@ export default function Dashboard() {
                       gig={gig}
                       isOwner
                       applicantCount={applicantCounts[gig.id]}
+                      onManage={handleManage}
                     />
                   ))}
                 </div>
@@ -269,6 +295,13 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      <ManageGigDialog
+        gigId={manageGig?.id || null}
+        gigTitle={manageGig?.title || ''}
+        open={!!manageGig}
+        onOpenChange={(open) => !open && setManageGig(null)}
+      />
     </div>
   );
 }

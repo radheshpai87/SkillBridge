@@ -25,3 +25,12 @@ export interface Gig {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface Application {
+  id: string;
+  gigId: string;
+  studentId: string;
+  status: 'pending' | 'accepted' | 'rejected' | 'completed';
+  createdAt?: Date;
+  updatedAt?: Date;
+}

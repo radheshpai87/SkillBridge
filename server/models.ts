@@ -42,5 +42,29 @@ const gigSchema = new mongoose.Schema({
   }
 });
 
+const applicationSchema = new mongoose.Schema({
+  gigId: { type: mongoose.Schema.Types.ObjectId, ref: 'Gig', required: true },
+  studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  status: { 
+    type: String, 
+    required: true, 
+    enum: ['pending', 'accepted', 'rejected', 'completed'],
+    default: 'pending'
+  },
+}, { 
+  timestamps: true,
+  toJSON: {
+    transform: function(doc, ret) {
+      ret.id = ret._id.toString();
+      ret.gigId = ret.gigId.toString();
+      ret.studentId = ret.studentId.toString();
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
+  }
+});
+
 export const UserModel = mongoose.model('User', userSchema);
 export const GigModel = mongoose.model('Gig', gigSchema);
+export const ApplicationModel = mongoose.model('Application', applicationSchema);
