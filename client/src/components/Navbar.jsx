@@ -80,6 +80,19 @@ export function Navbar() {
                 </Link>
               )}
 
+              {user.role === 'business' && (
+                <Link href="/my-gigs">
+                  <a
+                    className={`px-4 py-2 rounded-lg font-medium transition-all hover-elevate active-elevate-2 ${
+                      location === '/my-gigs' ? 'bg-accent text-accent-foreground' : 'text-foreground'
+                    }`}
+                    data-testid="link-my-gigs"
+                  >
+                    My Gigs
+                  </a>
+                </Link>
+              )}
+
               <ThemeToggle />
 
               <DropdownMenu>

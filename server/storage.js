@@ -41,6 +41,38 @@ export class MongoStorage {
     return gigs.map(gig => this.transformGig(gig));
   }
 
+  async getGigsByBusiness(businessId) {
+    if (!mongoose.Types.ObjectId.isValid(businessId)) return [];
+    
+    const gigs = await GigModel.find({ postedBy: businessId }).lean();
+    
+    if (gigs.length === 0) return [];
+    
+    const gigIds = gigs.map(gig => gig._id);
+    const applications = await ApplicationModel.find({ gigId: { $in: gigIds } }).lean();
+    
+    const studentIds = [...new Set(applications.map(app => app.studentId))];
+    const students = await UserModel.find({ _id: { $in: studentIds } }).lean();
+    const studentsMap = new Map(students.map(user => [user._id.toString(), this.transformPublicUser(user)]));
+    
+    const applicationsByGig = new Map();
+    applications.forEach(app => {
+      const gigId = app.gigId.toString();
+      if (!applicationsByGig.has(gigId)) {
+        applicationsByGig.set(gigId, []);
+      }
+      applicationsByGig.get(gigId).push({
+        ...this.transformApplication(app),
+        student: studentsMap.get(app.studentId.toString()),
+      });
+    });
+    
+    return gigs.map(gig => ({
+      ...this.transformGig(gig),
+      applications: applicationsByGig.get(gig._id.toString()) || [],
+    }));
+  }
+
   async createGig(insertGig) {
     const gig = await GigModel.create({
       ...insertGig,

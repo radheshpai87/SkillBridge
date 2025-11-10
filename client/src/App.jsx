@@ -11,6 +11,7 @@ import Register from "@/pages/Register";
 import Dashboard from "@/pages/Dashboard";
 import BrowseGigs from "@/pages/BrowseGigs";
 import MyApplications from "@/pages/MyApplications";
+import MyGigs from "@/pages/MyGigs";
 
 function ProtectedRoute({ component: Component }) {
   const { isAuthenticated } = useAuth();
@@ -50,6 +51,9 @@ function Router() {
       </Route>
       <Route path="/my-applications">
         <ProtectedRoute component={MyApplications} />
+      </Route>
+      <Route path="/my-gigs">
+        <ProtectedRoute component={MyGigs} />
       </Route>
       <Route component={NotFound} />
     </Switch>

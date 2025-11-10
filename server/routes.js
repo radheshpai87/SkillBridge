@@ -198,6 +198,22 @@ export async function registerRoutes(app) {
     }
   });
 
+  app.get('/api/gigs/my', authenticateToken, async (req, res) => {
+    try {
+      const user = req.user;
+
+      if (user.role !== 'business') {
+        return res.status(403).json({ message: 'Only businesses can view their gigs' });
+      }
+
+      const gigs = await storage.getGigsByBusiness(user.id);
+      return res.json(gigs);
+    } catch (error) {
+      console.error('Get my gigs error:', error);
+      return res.status(500).json({ message: 'Failed to fetch your gigs' });
+    }
+  });
+
   app.post('/api/gigs/apply/:gigId', authenticateToken, async (req, res) => {
     try {
       const user = req.user;
