@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import type { Request, Response, NextFunction } from "express";
-import type { User } from "@shared/schema";
+import type { User } from "@shared/types";
 
 const JWT_SECRET = process.env.SESSION_SECRET || "your-secret-key-change-in-production";
 
@@ -77,14 +77,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate JWT token
       const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
 
-      // Don't send password back and parse JSON fields
+      // Don't send password back
       const { password: _, ...userWithoutPassword } = user;
-      const responseUser = {
-        ...userWithoutPassword,
-        skills: user.skills ? JSON.parse(user.skills) : null,
-      };
 
-      return res.status(201).json({ token, user: responseUser });
+      return res.status(201).json({ token, user: userWithoutPassword });
     } catch (error) {
       console.error('Registration error:', error);
       return res.status(500).json({ message: 'Registration failed' });
@@ -115,14 +111,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate JWT token
       const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
 
-      // Don't send password back and parse JSON fields
+      // Don't send password back
       const { password: _, ...userWithoutPassword } = user;
-      const responseUser = {
-        ...userWithoutPassword,
-        skills: user.skills ? JSON.parse(user.skills) : null,
-      };
 
-      return res.status(200).json({ token, user: responseUser });
+      return res.status(200).json({ token, user: userWithoutPassword });
     } catch (error) {
       console.error('Login error:', error);
       return res.status(500).json({ message: 'Login failed' });
@@ -132,11 +124,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get current user
   app.get('/api/auth/me', authenticateToken, async (req: AuthRequest, res: Response) => {
     const { password: _, ...userWithoutPassword } = req.user!;
-    const responseUser = {
-      ...userWithoutPassword,
-      skills: req.user!.skills ? JSON.parse(req.user!.skills) : null,
-    };
-    return res.json(responseUser);
+    return res.json(userWithoutPassword);
   });
 
   // Update profile
@@ -148,7 +136,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updates: Partial<User> = {};
       if (name) updates.name = name;
       if (bio !== undefined) updates.bio = bio;
-      if (skills) updates.skills = JSON.stringify(skills);
+      if (skills) updates.skills = skills;
       if (companyName !== undefined) updates.companyName = companyName;
       if (description !== undefined) updates.description = description;
 
@@ -159,11 +147,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { password: _, ...userWithoutPassword } = updatedUser;
-      const responseUser = {
-        ...userWithoutPassword,
-        skills: updatedUser.skills ? JSON.parse(updatedUser.skills) : null,
-      };
-      return res.json(responseUser);
+      return res.json(userWithoutPassword);
     } catch (error) {
       console.error('Profile update error:', error);
       return res.status(500).json({ message: 'Profile update failed' });
@@ -206,11 +190,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/gigs/all', async (req: Request, res: Response) => {
     try {
       const gigs = await storage.getAllGigs();
-      const responseGigs = gigs.map(gig => ({
-        ...gig,
-        applicants: gig.applicants ? JSON.parse(gig.applicants) : [],
-      }));
-      return res.json(responseGigs);
+      return res.json(gigs);
     } catch (error) {
       console.error('Get gigs error:', error);
       return res.status(500).json({ message: 'Failed to fetch gigs' });
@@ -227,7 +207,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const allGigs = await storage.getAllGigs();
-      const userSkills = user.skills ? JSON.parse(user.skills) : [];
+      const userSkills = user.skills || [];
 
       if (userSkills.length === 0) {
         return res.json([]);
@@ -241,12 +221,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         );
       });
 
-      const responseGigs = matchedGigs.map(gig => ({
-        ...gig,
-        applicants: gig.applicants ? JSON.parse(gig.applicants) : [],
-      }));
-
-      return res.json(responseGigs);
+      return res.json(matchedGigs);
     } catch (error) {
       console.error('Get matched gigs error:', error);
       return res.status(500).json({ message: 'Failed to fetch matched gigs' });
@@ -268,28 +243,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: 'Gig not found' });
       }
 
-      // Parse applicants
-      const applicants = gig.applicants ? JSON.parse(gig.applicants) : [];
-
       // Check if already applied
-      if (applicants.includes(user.id)) {
+      if (gig.applicants.includes(user.id)) {
         return res.status(400).json({ message: 'Already applied to this gig' });
       }
 
       // Add applicant
-      applicants.push(user.id);
+      const updatedApplicants = [...gig.applicants, user.id];
 
       // Update gig
       const updatedGig = await storage.updateGig(gigId, {
-        applicants: JSON.stringify(applicants),
+        applicants: updatedApplicants,
       });
 
-      const responseGig = {
-        ...updatedGig,
-        applicants: updatedGig!.applicants ? JSON.parse(updatedGig!.applicants) : [],
-      };
-
-      return res.json(responseGig);
+      return res.json(updatedGig);
     } catch (error) {
       console.error('Apply to gig error:', error);
       return res.status(500).json({ message: 'Failed to apply to gig' });
@@ -306,12 +273,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: 'Gig not found' });
       }
 
-      const responseGig = {
-        ...gig,
-        applicants: gig.applicants ? JSON.parse(gig.applicants) : [],
-      };
-
-      return res.json(responseGig);
+      return res.json(gig);
     } catch (error) {
       console.error('Get gig error:', error);
       return res.status(500).json({ message: 'Failed to fetch gig' });

@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { Briefcase, TrendingUp, Users, CheckCircle } from 'lucide-react';
-import type { Gig } from '@shared/schema';
+import type { Gig } from '@shared/types';
 
 export default function Dashboard() {
   const { user } = useAuth();

@@ -2,7 +2,7 @@ import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, DollarSign, Briefcase } from 'lucide-react';
-import type { Gig } from '@shared/schema';
+import type { Gig } from '@shared/types';
 
 interface GigCardProps {
   gig: Gig;

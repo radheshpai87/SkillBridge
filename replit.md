@@ -4,7 +4,7 @@
 
 SkillBridge is a full-stack web application that connects college students and local youth with small businesses seeking short-term help through affordable gigs. The platform serves as a marketplace for micro-opportunities, enabling skill-based matching between students offering services (content creation, tutoring, design, etc.) and businesses posting gigs.
 
-The application is built as a modern single-page application with a React frontend, Express backend, and PostgreSQL database, following a clean architectural pattern with clear separation between client and server concerns.
+The application is built as a modern single-page application with a React frontend, Express backend, and MongoDB database, following a clean architectural pattern with clear separation between client and server concerns.
 
 ## User Preferences
 
@@ -54,9 +54,11 @@ Preferred communication style: Simple, everyday language.
 - Request/response logging for debugging with JSON response capture
 
 **Storage Layer**
-- In-memory storage implementation (MemStorage) for development
-- Interface-based design (IStorage) allowing easy swap to database implementation
-- Schema defined in shared folder for type consistency across client/server
+- MongoDB Atlas for production database with Mongoose ODM
+- MongoStorage implementation providing IStorage interface
+- Connection management in server/db.ts with automatic retry and error handling
+- Native array storage (no JSON serialization) for skills and applicants
+- ObjectId to string conversion for frontend compatibility
 
 **Authentication Flow**
 - JWT tokens stored in localStorage on client
@@ -66,21 +68,25 @@ Preferred communication style: Simple, everyday language.
 
 ### Data Schema
 
-**User Model**
-- Dual-role system: "student" and "business" users in single table
-- Student-specific fields: skills (JSON array), bio
+**User Model (Mongoose Schema)**
+- Dual-role system: "student" and "business" users in single collection
+- Student-specific fields: skills (array of strings), bio
 - Business-specific fields: companyName, description
 - Email-based unique identification with hashed passwords
+- Timestamps (createdAt, updatedAt) automatically managed by Mongoose
 
-**Gig Model**
+**Gig Model (Mongoose Schema)**
 - Posted by businesses with title, description, budget, location
-- Applicants stored as JSON array of user IDs
+- postedBy: ObjectId reference to User
+- applicants: Array of ObjectId references to User documents
 - Simple skill-based matching using keyword search in title/description
+- Timestamps for tracking creation and updates
 
 **Validation**
-- Zod schemas for runtime validation on both client and server
-- Drizzle-zod integration for type-safe schema creation
+- Zod schemas (shared/validators.ts) for runtime request validation
+- TypeScript interfaces (shared/types.ts) for type safety across client/server
 - Client-side validation with React Hook Form and @hookform/resolvers
+- Server-side validation using Zod schemas for all endpoints
 
 ### Build & Deployment
 
@@ -97,10 +103,11 @@ Preferred communication style: Simple, everyday language.
 ## External Dependencies
 
 ### Database
-- **Drizzle ORM** with PostgreSQL dialect for database operations
-- **@neondatabase/serverless** driver for PostgreSQL connection
-- Schema migrations managed through Drizzle Kit
-- Database URL configured via `DATABASE_URL` environment variable
+- **Mongoose ODM** for MongoDB operations with schema validation
+- **MongoDB Atlas** cloud database for production deployment
+- Connection string configured via `MONGODB_URI` environment variable
+- Automatic connection management with retry logic and error handling
+- Native support for arrays and embedded documents
 
 ### Authentication & Security
 - **jsonwebtoken** for JWT token generation and verification

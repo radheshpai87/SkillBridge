@@ -11,7 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { Briefcase, Plus, Search, DollarSign, MapPin } from 'lucide-react';
-import type { Gig } from '@shared/schema';
+import type { Gig } from '@shared/types';
 
 export default function BrowseGigs() {
   const { user } = useAuth();
