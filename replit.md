@@ -15,7 +15,8 @@ Preferred communication style: Simple, everyday language.
 ### Frontend Architecture
 
 **Framework & Routing**
-- React 18 with TypeScript for type-safe component development
+- React 18 with JavaScript (JSX) for component development
+- JSDoc typedefs in shared/types.js for editor type hints (pure JavaScript runtime)
 - Wouter for lightweight client-side routing
 - Single-page application (SPA) architecture with protected and public route components
 
@@ -38,7 +39,7 @@ Preferred communication style: Simple, everyday language.
 ### Backend Architecture
 
 **Server Framework**
-- Express.js with TypeScript for the HTTP server
+- Express.js with JavaScript for the HTTP server
 - RESTful API design pattern for all endpoints
 - JWT-based stateless authentication with bcryptjs password hashing
 
@@ -56,7 +57,7 @@ Preferred communication style: Simple, everyday language.
 **Storage Layer**
 - MongoDB Atlas for production database with Mongoose ODM
 - MongoStorage implementation providing IStorage interface
-- Connection management in server/db.ts with automatic retry and error handling
+- Connection management in server/db.js with automatic retry and error handling
 - Native array storage (no JSON serialization) for skills and applicants
 - ObjectId to string conversion for frontend compatibility
 
@@ -83,8 +84,8 @@ Preferred communication style: Simple, everyday language.
 - Timestamps for tracking creation and updates
 
 **Validation**
-- Zod schemas (shared/validators.ts) for runtime request validation
-- TypeScript interfaces (shared/types.ts) for type safety across client/server
+- Zod schemas (shared/validators.js) for runtime request validation
+- JSDoc typedefs (shared/types.js) for editor hints and documentation
 - Client-side validation with React Hook Form and @hookform/resolvers
 - Server-side validation using Zod schemas for all endpoints
 
@@ -129,7 +130,7 @@ Preferred communication style: Simple, everyday language.
 - **Vite** for development server and build tooling
 - **@replit/vite-plugin-runtime-error-modal** for error overlays
 - **@replit/vite-plugin-cartographer** and **@replit/vite-plugin-dev-banner** for Replit-specific features
-- **tsx** for TypeScript execution in development
+- **Node.js** for JavaScript execution in development (no TypeScript)
 
 ### Data Fetching
 - **@tanstack/react-query** for server state management, caching, and automatic refetching
