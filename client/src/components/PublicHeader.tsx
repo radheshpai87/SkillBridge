@@ -12,15 +12,15 @@ export function PublicHeader({ showCTA = true }: PublicHeaderProps) {
     <nav className="border-b bg-card">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/">
-            <a className="flex items-center space-x-2 hover-elevate active-elevate-2 px-3 py-2 rounded-lg transition-all" data-testid="link-logo">
+          <Link href="/" data-testid="link-logo">
+            <div className="flex items-center space-x-2 hover-elevate active-elevate-2 px-3 py-2 rounded-lg transition-all cursor-pointer">
               <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary">
                 <Briefcase className="w-6 h-6 text-primary-foreground" />
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 SkillBridge
               </span>
-            </a>
+            </div>
           </Link>
 
           <div className="flex items-center space-x-3">
