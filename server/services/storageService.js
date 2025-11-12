@@ -207,11 +207,21 @@ export class MongoStorage {
     return this.transformApplication(application.toObject());
   }
 
-  async updateApplicationStatus(id, status) {
+  async updateApplicationStatus(id, status, rejectionReason = null) {
     if (!mongoose.Types.ObjectId.isValid(id)) return undefined;
+    
+    const updateData = { status };
+    
+    // Add or clear rejection reason based on status
+    if (status === 'rejected' && rejectionReason) {
+      updateData.rejectionReason = rejectionReason;
+    } else if (status !== 'rejected') {
+      updateData.rejectionReason = null; // Clear rejection reason if status changes from rejected
+    }
+    
     const application = await ApplicationModel.findByIdAndUpdate(
       id,
-      { status },
+      updateData,
       { new: true }
     ).lean();
     return application ? this.transformApplication(application) : undefined;
@@ -234,6 +244,7 @@ export class MongoStorage {
       gigId,
       studentId,
       status: doc.status,
+      rejectionReason: doc.rejectionReason || null,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     };

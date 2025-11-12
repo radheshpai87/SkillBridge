@@ -7,9 +7,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
@@ -24,6 +36,9 @@ const statusVariants = {
 
 export function ManageGigDialog({ gigId, gigTitle, open, onOpenChange }) {
   const { toast } = useToast();
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [selectedApplicationId, setSelectedApplicationId] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   const { data: applications, isLoading } = useQuery({
     queryKey: [`/api/applications/gig/${gigId}`],
@@ -31,8 +46,11 @@ export function ManageGigDialog({ gigId, gigTitle, open, onOpenChange }) {
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: async ({ applicationId, status }) => {
-      return apiRequest('PATCH', `/api/applications/${applicationId}/status`, { status });
+    mutationFn: async ({ applicationId, status, rejectionReason }) => {
+      return apiRequest('PATCH', `/api/applications/${applicationId}/status`, { 
+        status,
+        rejectionReason 
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/applications/gig/${gigId}`] });
@@ -42,6 +60,9 @@ export function ManageGigDialog({ gigId, gigTitle, open, onOpenChange }) {
         title: 'Status updated!',
         description: 'Application status has been updated successfully.',
       });
+      setRejectDialogOpen(false);
+      setRejectionReason('');
+      setSelectedApplicationId(null);
     },
     onError: () => {
       toast({
@@ -56,8 +77,19 @@ export function ManageGigDialog({ gigId, gigTitle, open, onOpenChange }) {
     updateStatusMutation.mutate({ applicationId, status: 'accepted' });
   };
 
-  const handleReject = (applicationId) => {
-    updateStatusMutation.mutate({ applicationId, status: 'rejected' });
+  const openRejectDialog = (applicationId) => {
+    setSelectedApplicationId(applicationId);
+    setRejectDialogOpen(true);
+  };
+
+  const handleRejectConfirm = () => {
+    if (selectedApplicationId) {
+      updateStatusMutation.mutate({ 
+        applicationId: selectedApplicationId, 
+        status: 'rejected',
+        rejectionReason: rejectionReason.trim() || undefined
+      });
+    }
   };
 
   return (
@@ -104,6 +136,12 @@ export function ManageGigDialog({ gigId, gigTitle, open, onOpenChange }) {
                       {app.student?.bio && (
                         <p className="text-sm text-muted-foreground">{app.student.bio}</p>
                       )}
+                      {app.applicationMessage && (
+                        <div className="mt-3 p-3 bg-muted/50 rounded-lg border border-border">
+                          <h4 className="text-xs font-semibold text-foreground mb-1.5">Application Message:</h4>
+                          <p className="text-sm text-foreground whitespace-pre-wrap">{app.applicationMessage}</p>
+                        </div>
+                      )}
                       <div className="flex items-center gap-2">
                         <Badge variant={statusVariants[app.status]} data-testid={`badge-applicant-status-${app.id}`}>
                           {app.status}
@@ -130,7 +168,7 @@ export function ManageGigDialog({ gigId, gigTitle, open, onOpenChange }) {
                         <Button
                           size="sm"
                           variant="destructive"
-                          onClick={() => handleReject(app.id)}
+                          onClick={() => openRejectDialog(app.id)}
                           disabled={updateStatusMutation.isPending}
                           data-testid={`button-reject-${app.id}`}
                         >
@@ -154,6 +192,47 @@ export function ManageGigDialog({ gigId, gigTitle, open, onOpenChange }) {
           </div>
         )}
       </DialogContent>
+
+      {/* Rejection Reason Dialog */}
+      <AlertDialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Reject Application</AlertDialogTitle>
+            <AlertDialogDescription>
+              Would you like to provide a reason for rejecting this application? This will help the student improve future applications.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="py-4">
+            <Label htmlFor="rejection-reason" className="text-sm font-medium mb-2 block">
+              Rejection Reason (Optional)
+            </Label>
+            <Textarea
+              id="rejection-reason"
+              placeholder="e.g., Looking for more experience with React, or the position has been filled..."
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              maxLength={500}
+              rows={4}
+              className="resize-none"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              {rejectionReason.length}/500 characters
+            </p>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={updateStatusMutation.isPending}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleRejectConfirm}
+              disabled={updateStatusMutation.isPending}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              {updateStatusMutation.isPending ? 'Rejecting...' : 'Reject Application'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 }

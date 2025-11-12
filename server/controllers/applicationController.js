@@ -4,7 +4,17 @@ import { asyncHandler } from '../middleware/errorHandler.js';
 
 export const applyToGig = asyncHandler(async (req, res) => {
   const { gigId } = req.params;
+  const { applicationMessage } = req.body;
   const userId = req.user.id;
+
+  // Validate application message
+  if (!applicationMessage || applicationMessage.trim().length < 50) {
+    throw new ValidationError('Application message must be at least 50 characters');
+  }
+
+  if (applicationMessage.length > 1000) {
+    throw new ValidationError('Application message must not exceed 1000 characters');
+  }
 
   const gig = await storage.getGig(gigId);
   
@@ -23,6 +33,7 @@ export const applyToGig = asyncHandler(async (req, res) => {
   const application = await storage.createApplication({
     gigId,
     studentId: userId,
+    applicationMessage: applicationMessage.trim(),
   });
 
   // Update gig applicants
@@ -71,12 +82,17 @@ export const getMyApplications = asyncHandler(async (req, res) => {
 
 export const updateApplicationStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { status } = req.body;
+  const { status, rejectionReason } = req.body;
 
   const validStatuses = ['pending', 'accepted', 'rejected', 'completed'];
   
   if (!status || !validStatuses.includes(status)) {
     throw new ValidationError(`Invalid status. Must be one of: ${validStatuses.join(', ')}`);
+  }
+
+  // Validate rejection reason if status is rejected
+  if (status === 'rejected' && rejectionReason && rejectionReason.length > 500) {
+    throw new ValidationError('Rejection reason must be less than 500 characters');
   }
 
   const application = await storage.getApplication(id);
@@ -91,7 +107,7 @@ export const updateApplicationStatus = asyncHandler(async (req, res) => {
     throw new ForbiddenError('Not authorized to update this application');
   }
 
-  const updatedApplication = await storage.updateApplicationStatus(id, status);
+  const updatedApplication = await storage.updateApplicationStatus(id, status, rejectionReason);
 
   res.json({
     success: true,

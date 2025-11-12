@@ -4,7 +4,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Briefcase, Users, CheckCircle2, XCircle, Clock, User, Mail } from 'lucide-react';
+import { Loader2, Briefcase, Users, CheckCircle2, XCircle, Clock, User, Mail, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { useLocation } from 'wouter';
 import {
@@ -113,13 +113,23 @@ export default function MyGigs() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2" data-testid="heading-my-gigs">
-            My Gigs
-          </h1>
-          <p className="text-muted-foreground">
-            Manage your posted gigs and review applications
-          </p>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-foreground mb-2" data-testid="heading-my-gigs">
+              My Gigs
+            </h1>
+            <p className="text-muted-foreground">
+              Manage your posted gigs and review applications
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => setLocation('/dashboard')}
+            className="gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

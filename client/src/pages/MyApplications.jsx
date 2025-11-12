@@ -1,15 +1,18 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
+import { useLocation } from 'wouter';
 import { Navbar } from '@/components/Navbar';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ClipboardList, DollarSign, MapPin, Calendar, CheckCircle2, XCircle, Clock, FileText } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ClipboardList, DollarSign, MapPin, Calendar, CheckCircle2, XCircle, Clock, FileText, AlertCircle, ArrowLeft } from 'lucide-react';
 
 export default function MyApplications() {
   const { user } = useAuth();
+  const [, setLocation] = useLocation();
 
   const { data: applications, isLoading } = useQuery({
     queryKey: ['/api/applications/my'],
@@ -54,16 +57,26 @@ export default function MyApplications() {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary">
-            <ClipboardList className="w-6 h-6 text-primary-foreground" />
+        <div className="flex items-center justify-between gap-3 mb-8">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary">
+              <ClipboardList className="w-6 h-6 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold text-foreground">My Applications</h1>
+              <p className="text-muted-foreground mt-1">
+                Track all your gig applications in one place
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-4xl font-bold text-foreground">My Applications</h1>
-            <p className="text-muted-foreground mt-1">
-              Track all your gig applications in one place
-            </p>
-          </div>
+          <Button
+            variant="outline"
+            onClick={() => setLocation('/dashboard')}
+            className="gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </Button>
         </div>
 
         {/* Summary Cards */}
@@ -188,6 +201,31 @@ export default function MyApplications() {
                                 <p className="text-muted-foreground">Posted by</p>
                                 <p className="font-medium text-foreground">{app.gig.postedByUser.companyName || app.gig.postedByUser.name}</p>
                               </div>
+                            </>
+                          )}
+
+                          {app.applicationMessage && (
+                            <>
+                              <Separator />
+                              <div className="text-sm">
+                                <p className="text-muted-foreground font-medium mb-1.5">Your Application:</p>
+                                <div className="p-3 bg-muted rounded-lg">
+                                  <p className="text-foreground whitespace-pre-wrap">{app.applicationMessage}</p>
+                                </div>
+                              </div>
+                            </>
+                          )}
+
+                          {app.status === 'rejected' && app.rejectionReason && (
+                            <>
+                              <Separator />
+                              <Alert variant="destructive" className="border-destructive/50">
+                                <AlertCircle className="h-4 w-4" />
+                                <AlertDescription className="ml-2">
+                                  <p className="text-sm font-medium mb-1">Rejection Reason:</p>
+                                  <p className="text-sm">{app.rejectionReason}</p>
+                                </AlertDescription>
+                              </Alert>
                             </>
                           )}
                         </CardContent>

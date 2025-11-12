@@ -9,6 +9,16 @@ const applicationSchema = new mongoose.Schema({
     enum: ['pending', 'accepted', 'rejected', 'completed'],
     default: 'pending'
   },
+  applicationMessage: {
+    type: String,
+    required: false, // Optional for backward compatibility with existing applications
+    maxlength: 1000,
+    default: 'Application submitted before message feature was implemented.'
+  },
+  rejectionReason: {
+    type: String,
+    default: null
+  },
 }, { 
   timestamps: true,
   toJSON: {

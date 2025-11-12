@@ -7,7 +7,7 @@ import {
 } from '../controllers/applicationController.js';
 import { authenticate, authorize } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
-import { updateApplicationStatusSchema } from '../validators.js';
+import { createApplicationSchema, updateApplicationStatusSchema } from '../validators.js';
 
 const router = Router();
 
@@ -15,7 +15,7 @@ const router = Router();
 router.use(authenticate);
 
 // Student routes
-router.post('/gig/:gigId', authorize('student'), applyToGig);
+router.post('/gig/:gigId', authorize('student'), validate(createApplicationSchema), applyToGig);
 router.get('/my', authorize('student'), getMyApplications);
 
 // Business routes

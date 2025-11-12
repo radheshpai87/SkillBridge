@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Navbar } from '@/components/Navbar';
 import { GigCard } from '@/components/GigCard';
+import { ApplyToGigDialog } from '@/components/ApplyToGigDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -14,7 +15,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
-import { Briefcase, Plus, Search, DollarSign, MapPin, X, SlidersHorizontal } from 'lucide-react';
+import { Briefcase, Plus, Search, DollarSign, MapPin, X, SlidersHorizontal, ArrowLeft } from 'lucide-react';
 
 export default function BrowseGigs() {
   const { user } = useAuth();
@@ -26,6 +27,8 @@ export default function BrowseGigs() {
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
   const [showPostForm, setShowPostForm] = useState(false);
+  const [applyDialogOpen, setApplyDialogOpen] = useState(false);
+  const [selectedGig, setSelectedGig] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -85,13 +88,15 @@ export default function BrowseGigs() {
   });
 
   const applyMutation = useMutation({
-    mutationFn: async (gigId) => {
-      return apiRequest('POST', `/api/applications/gig/${gigId}`);
+    mutationFn: async ({ gigId, applicationMessage }) => {
+      return apiRequest('POST', `/api/applications/gig/${gigId}`, { applicationMessage });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gigs/all'] });
       queryClient.invalidateQueries({ queryKey: ['/api/gigs/matched'] });
       queryClient.invalidateQueries({ queryKey: ['/api/applications/my'] });
+      setApplyDialogOpen(false);
+      setSelectedGig(null);
       toast({
         title: 'Application submitted!',
         description: 'The business will review your application.',
@@ -112,7 +117,13 @@ export default function BrowseGigs() {
   };
 
   const handleApply = (gigId) => {
-    applyMutation.mutate(gigId);
+    const gig = displayGigs.find(g => g.id === gigId);
+    setSelectedGig(gig);
+    setApplyDialogOpen(true);
+  };
+
+  const handleApplySubmit = (gigId, applicationMessage) => {
+    applyMutation.mutate({ gigId, applicationMessage });
   };
 
   const clearFilters = () => {
@@ -229,17 +240,28 @@ export default function BrowseGigs() {
             </div>
           </div>
 
-          {user.role === 'business' && !showPostForm && (
+          <div className="flex gap-2">
+            {user.role === 'business' && !showPostForm && (
+              <Button
+                onClick={() => setShowPostForm(true)}
+                size="lg"
+                className="gap-2"
+                data-testid="button-show-post-form"
+              >
+                <Plus className="w-5 h-5" />
+                Post New Gig
+              </Button>
+            )}
             <Button
-              onClick={() => setShowPostForm(true)}
+              variant="outline"
+              onClick={() => setLocation('/dashboard')}
               size="lg"
               className="gap-2"
-              data-testid="button-show-post-form"
             >
-              <Plus className="w-5 h-5" />
-              Post New Gig
+              <ArrowLeft className="w-4 h-4" />
+              Dashboard
             </Button>
-          )}
+          </div>
         </div>
 
         {/* Post Gig Form (Business Only) */}
@@ -650,6 +672,17 @@ export default function BrowseGigs() {
           )}
         </div>
       </div>
+
+      {/* Apply to Gig Dialog */}
+      {selectedGig && (
+        <ApplyToGigDialog
+          gig={selectedGig}
+          open={applyDialogOpen}
+          onOpenChange={setApplyDialogOpen}
+          onSubmit={handleApplySubmit}
+          isSubmitting={applyMutation.isPending}
+        />
+      )}
     </div>
   );
 }

@@ -288,7 +288,7 @@ export default function Dashboard() {
                   <Button 
                     className="w-full justify-start gap-2" 
                     variant="outline"
-                    onClick={() => setLocation('/applications')}
+                    onClick={() => setLocation('/my-applications')}
                   >
                     <Calendar className="w-4 h-4" />
                     My Applications

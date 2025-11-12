@@ -25,6 +25,10 @@ export const gigSchema = z.object({
   location: z.string().min(1, "Location is required"),
 });
 
+export const createApplicationSchema = z.object({
+  applicationMessage: z.string().min(50, "Application message must be at least 50 characters").max(1000, "Application message must not exceed 1000 characters"),
+});
+
 export const updateProfileSchema = z.object({
   name: z.string().min(1, "Name is required").optional(),
   bio: z.string().optional(),
@@ -35,4 +39,5 @@ export const updateProfileSchema = z.object({
 
 export const updateApplicationStatusSchema = z.object({
   status: z.enum(['pending', 'accepted', 'rejected', 'completed']),
+  rejectionReason: z.string().optional(),
 });
