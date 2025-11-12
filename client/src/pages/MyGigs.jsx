@@ -197,7 +197,7 @@ export default function MyGigs() {
                       <div className="flex flex-wrap gap-4 mt-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <span className="font-medium">Budget:</span>
-                          <span data-testid={`text-gig-budget-${gig.id}`}>${gig.budget}</span>
+                          <span data-testid={`text-gig-budget-${gig.id}`}>₹{gig.budget}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <span className="font-medium">Location:</span>

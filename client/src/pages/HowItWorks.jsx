@@ -77,10 +77,9 @@ export default function HowItWorks() {
           <h1 className="text-5xl font-bold text-foreground mb-6">
             How SkillBridge Works
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            Connecting local youth with meaningful micro-opportunities in just four simple steps.
-            Whether you're looking for work or hiring talent, we've made the process seamless.
-          </p>
+                      <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Join thousands of Indian students and businesses already connecting on SkillBridge
+            </p>
           <div className="flex gap-4 justify-center">
             <Button asChild size="lg">
               <Link href="/register">
@@ -176,7 +175,7 @@ export default function HowItWorks() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Access a pool of talented, motivated youth for your project needs with our streamlined hiring process.
+                Access a pool of talented, motivated Indian youth from top universities for your project needs with our streamlined hiring process.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">

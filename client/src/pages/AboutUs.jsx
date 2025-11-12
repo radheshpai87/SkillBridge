@@ -43,66 +43,66 @@ export default function AboutUs() {
 
   const milestones = [
     {
-      year: "2020",
-      title: "Founded",
-      description: "SkillBridge was born from a simple idea: connect talented youth with meaningful work opportunities."
-    },
-    {
-      year: "2021",
-      title: "10,000 Users",
-      description: "Reached our first major milestone with 10,000 active users on the platform."
-    },
-    {
-      year: "2022",
-      title: "Series A Funding",
-      description: "Secured $5M in funding to expand our platform and team."
-    },
-    {
       year: "2023",
-      title: "50,000 Gigs",
-      description: "Celebrated completing 50,000 successful gigs, creating real impact for our community."
+      title: "Founded in Bangalore",
+      description: "SkillBridge was born from a simple idea: connect talented Indian youth with meaningful work opportunities in the startup capital of India."
     },
     {
       year: "2024",
-      title: "Global Expansion",
-      description: "Expanded to serve students and businesses across North America and Europe."
+      title: "25,000 Users",
+      description: "Reached our first major milestone with 25,000 active users across major Indian cities including Delhi, Mumbai, Bangalore, and Chennai."
+    },
+    {
+      year: "2024",
+      title: "Series A Funding",
+      description: "Secured ₹50M in funding from Indian investors to expand our platform and team, reflecting confidence in India's gig economy potential."
+    },
+    {
+      year: "2025",
+      title: "75,000 Gigs",
+      description: "Celebrated completing 75,000 successful gigs, creating real impact for students and businesses across India's diverse economy."
+    },
+    {
+      year: "2025",
+      title: "Pan-India Expansion",
+      description: "Expanded to serve students and businesses across all major Indian cities and tier-2 cities, connecting talent nationwide."
     }
   ];
 
   const team = [
     {
-      name: "Sarah Chen",
+      name: "Arun Sharma",
       role: "CEO & Co-Founder",
-      bio: "Former tech executive passionate about youth empowerment. MBA from Stanford, previously led product at a Fortune 500 company.",
+      bio: "Former tech executive at Infosys. MBA from IIM Bangalore, previously led product teams at major Indian tech companies.",
       image: "/api/placeholder/150/150"
     },
     {
-      name: "Marcus Johnson",
+      name: "Priya Venkatesan",
       role: "CTO & Co-Founder",
-      bio: "Serial entrepreneur with 15+ years in edtech. PhD in Computer Science, built 3 successful startups before SkillBridge.",
+      bio: "Serial entrepreneur with 12+ years in edtech. PhD in Computer Science from IIT Madras, built education platforms serving millions.",
       image: "/api/placeholder/150/150"
     },
     {
-      name: "Dr. Emily Rodriguez",
+      name: "Dr. Rajesh Gupta",
       role: "Head of Education",
-      bio: "Education researcher and former university professor. PhD in Education Technology, focused on career development for youth.",
+      bio: "Education researcher and former professor at JNU. PhD in Education Technology, focused on career development for Indian youth.",
       image: "/api/placeholder/150/150"
     },
     {
-      name: "David Kim",
+      name: "Kavita Singh",
       role: "VP of Engineering",
-      bio: "Engineering leader with expertise in scalable platforms. Previously built engineering teams at major tech companies.",
+      bio: "Engineering leader with expertise in scalable platforms. Previously built engineering teams at Tata Consultancy Services and Wipro.",
       image: "/api/placeholder/150/150"
     }
   ];
 
   const stats = [
-    { number: "100,000+", label: "Students Helped" },
-    { number: "5,000+", label: "Business Partners" },
-    { number: "150,000+", label: "Gigs Completed" },
+    { number: "50,000+", label: "Students Helped" },
+    { number: "2,500+", label: "Business Partners" },
+    { number: "75,000+", label: "Gigs Completed" },
     { number: "95%", label: "User Satisfaction" },
-    { number: "50+", label: "Countries Served" },
-    { number: "4.9★", label: "Average Rating" }
+    { number: "25+", label: "States Covered" },
+    { number: "4.8★", label: "Average Rating" }
   ];
 
   return (
@@ -116,9 +116,9 @@ export default function AboutUs() {
             About SkillBridge
           </h1>
           <p className="text-xl text-muted-foreground max-w-4xl mx-auto mb-8">
-            We're on a mission to bridge the gap between talented youth and meaningful work opportunities.
-            By connecting students with businesses, we're building a future where young people can gain
-            experience, earn income, and launch successful careers.
+            We're on a mission to bridge the gap between talented Indian youth and meaningful work opportunities.
+            By connecting students with businesses across India, we're building a future where young people can gain
+            experience, earn income, and launch successful careers in the world's fastest-growing economy.
           </p>
           <div className="flex gap-4 justify-center">
             <Button asChild size="lg">
@@ -141,14 +141,14 @@ export default function AboutUs() {
                 Our Mission
               </h2>
               <p className="text-lg text-muted-foreground mb-6">
-                In today's rapidly changing job market, young people need more than just degrees—they need
-                real-world experience. At the same time, businesses struggle to find skilled talent for
-                project-based work.
+                In India's rapidly growing digital economy, young people need more than just degrees—they need
+                real-world experience. At the same time, Indian businesses struggle to find skilled talent for
+                project-based work in a competitive market.
               </p>
               <p className="text-lg text-muted-foreground mb-6">
                 SkillBridge solves this by creating a trusted platform where students can build portfolios,
                 gain experience, and earn money while businesses can access a pipeline of motivated,
-                skilled young talent.
+                skilled young Indian talent ready to contribute to the nation's growth.
               </p>
               <div className="flex items-center gap-3 text-primary">
                 <HandHeart className="w-6 h-6" />
@@ -272,7 +272,7 @@ export default function AboutUs() {
                   <CheckCircle2 className="w-6 h-6 text-green-500 mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold text-foreground mb-1">Income Generation</h3>
-                    <p className="text-muted-foreground">Students earn an average of $18-35/hour on our platform</p>
+                    <p className="text-muted-foreground">Students earn an average of ₹400-800/hour on our platform</p>
                   </div>
                 </div>
                 <div className="flex gap-4">

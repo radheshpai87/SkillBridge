@@ -66,15 +66,15 @@ export default function Contact() {
       icon: <Mail className="w-6 h-6 text-primary" />,
       title: "Email Support",
       description: "Get help via email",
-      contact: "support@skillbridge.com",
+      contact: "support@skillbridge.in",
       response: "Within 24 hours"
     },
     {
       icon: <Phone className="w-6 h-6 text-primary" />,
       title: "Phone Support",
       description: "Speak with our team",
-      contact: "+1 (555) 123-4567",
-      response: "Mon-Fri, 9AM-6PM EST"
+      contact: "+91 80 4567-8901",
+      response: "Mon-Fri, 9AM-6PM IST"
     },
     {
       icon: <MessageSquare className="w-6 h-6 text-primary" />,
@@ -94,22 +94,22 @@ export default function Contact() {
 
   const offices = [
     {
-      city: "San Francisco",
-      address: "123 Tech Street, Suite 456\nSan Francisco, CA 94105",
-      phone: "+1 (555) 123-4567",
-      email: "sf@skillbridge.com"
+      city: "Bangalore",
+      address: "123 Brigade Road, 4th Floor\nBangalore, Karnataka 560025",
+      phone: "+91 80 4567-8901",
+      email: "bangalore@skillbridge.in"
     },
     {
-      city: "New York",
-      address: "456 Business Ave, Floor 12\nNew York, NY 10001",
-      phone: "+1 (555) 987-6543",
-      email: "ny@skillbridge.com"
+      city: "Mumbai",
+      address: "456 Bandra West, BKC\nMumbai, Maharashtra 400051",
+      phone: "+91 22 6789-0123",
+      email: "mumbai@skillbridge.in"
     },
     {
-      city: "Austin",
-      address: "789 Innovation Blvd, Suite 101\nAustin, TX 78701",
-      phone: "+1 (555) 456-7890",
-      email: "austin@skillbridge.com"
+      city: "Delhi",
+      address: "789 Connaught Place, 2nd Floor\nNew Delhi, Delhi 110001",
+      phone: "+91 11 4567-8901",
+      email: "delhi@skillbridge.in"
     }
   ];
 
@@ -319,7 +319,7 @@ export default function Contact() {
                     <Clock className="w-5 h-5 text-primary" />
                     <div>
                       <div className="font-medium">Monday - Friday</div>
-                      <div className="text-sm text-muted-foreground">9:00 AM - 6:00 PM EST</div>
+                      <div className="text-sm text-muted-foreground">9:00 AM - 6:00 PM IST</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">

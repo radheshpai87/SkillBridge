@@ -305,7 +305,7 @@ export default function BrowseGigs() {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label htmlFor="budget" className="text-sm font-medium text-foreground">
-                      Budget ($)
+                      Budget (₹)
                     </label>
                     <div className="relative">
                       <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />

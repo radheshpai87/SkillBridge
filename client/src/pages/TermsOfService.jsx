@@ -1,7 +1,11 @@
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PublicHeader } from '@/components/PublicHeader';
+import       "For questions about these terms, contact us at legal@skillbridge.in",
+      "Phone: +91 80 4567-8901",
+      "Address: 123 Brigade Road, 4th Floor, Bangalore, Karnataka 560025",
+      "Our legal team is available to address concerns and questions.",
+      "We aim to respond to inquiries within 48 hours."licHeader } from '@/components/PublicHeader';
 import { FileText, ArrowRight, Scale, Calendar } from 'lucide-react';
 
 export default function TermsOfService() {
@@ -144,10 +148,10 @@ export default function TermsOfService() {
       id: "governing-law",
       title: "Governing Law and Dispute Resolution",
       content: [
-        "These terms are governed by the laws of the State of California.",
-        "Disputes will be resolved through binding arbitration in San Francisco County.",
+        "These terms are governed by the laws of India, specifically the Information Technology Act, 2000 and the Indian Contract Act, 1872.",
+        "Disputes will be resolved through binding arbitration in Bangalore, Karnataka.",
         "Users waive their right to participate in class action lawsuits.",
-        "Arbitration will be conducted by a neutral third-party arbitrator.",
+        "Arbitration will be conducted by a neutral third-party arbitrator under the Arbitration and Conciliation Act, 1996.",
         "The prevailing party in any dispute is entitled to recover reasonable attorney's fees."
       ]
     },
@@ -166,9 +170,9 @@ export default function TermsOfService() {
       id: "contact-information",
       title: "Contact Information",
       content: [
-        "For questions about these terms, contact us at legal@skillbridge.com",
-        "Phone: +1 (555) 123-4567",
-        "Address: 123 Tech Street, Suite 456, San Francisco, CA 94105",
+        "For questions about these terms, contact us at legal@skillbridge.in",
+        "Phone: +91 80 4567-8901",
+        "Address: 123 Brigade Road, 4th Floor, Bangalore, Karnataka 560025",
         "Our legal team is available to address concerns and questions.",
         "We aim to respond to inquiries within 48 hours."
       ]
@@ -255,7 +259,7 @@ export default function TermsOfService() {
               <p className="text-sm text-muted-foreground">
                 <strong>Important:</strong> These terms contain important legal information including arbitration agreements,
                 limitation of liability, and indemnification provisions. Please read them carefully. If you have questions,
-                contact our legal team at legal@skillbridge.com.
+                contact our legal team at legal@skillbridge.in.
               </p>
             </div>
           </CardContent>

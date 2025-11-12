@@ -112,10 +112,10 @@ export default function PrivacyPolicy() {
       title: "Contact Us",
       content: [
         "If you have questions about this Privacy Policy, please contact us:",
-        "Email: privacy@skillbridge.com",
-        "Phone: +1 (555) 123-4567",
-        "Address: 123 Tech Street, Suite 456, San Francisco, CA 94105",
-        "Our Data Protection Officer can be reached at dpo@skillbridge.com"
+        "Email: privacy@skillbridge.in",
+        "Phone: +91 80 4567-8901",
+        "Address: 123 Brigade Road, 4th Floor, Bangalore, Karnataka 560025",
+        "Our Data Protection Officer can be reached at dpo@skillbridge.in"
       ]
     }
   ];
@@ -228,7 +228,7 @@ export default function PrivacyPolicy() {
               <FileText className="w-8 h-8 text-primary mx-auto mb-3" />
               <h3 className="font-semibold mb-2">Legal Compliance</h3>
               <p className="text-sm text-muted-foreground">
-                We comply with GDPR, CCPA, and other privacy regulations.
+                We comply with GDPR, CCPA, and Indian data protection laws including the Information Technology Act, 2000 and upcoming Personal Data Protection Bill.
               </p>
             </CardContent>
           </Card>

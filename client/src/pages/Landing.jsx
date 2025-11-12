@@ -19,13 +19,13 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6">
-              Connecting Local Youth to{' '}
+              Connecting Indian Youth to{' '}
               <span className="text-primary font-semibold">
                 Micro-Opportunities
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto">
-              SkillBridge empowers college students and local youth to showcase their skills and connect with small businesses for affordable, meaningful gigs.
+              SkillBridge empowers college students and local youth across India to showcase their skills and connect with small businesses for affordable, meaningful gigs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/register">
@@ -48,19 +48,19 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-primary mb-2" data-testid="stat-students">500+</div>
+              <div className="text-4xl md:text-5xl font-bold text-primary mb-2" data-testid="stat-students">2,500+</div>
               <div className="text-sm text-muted-foreground">Active Students</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-secondary mb-2" data-testid="stat-businesses">200+</div>
+              <div className="text-4xl md:text-5xl font-bold text-secondary mb-2" data-testid="stat-businesses">800+</div>
               <div className="text-sm text-muted-foreground">Local Businesses</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-primary mb-2" data-testid="stat-gigs">1,200+</div>
+              <div className="text-4xl md:text-5xl font-bold text-primary mb-2" data-testid="stat-gigs">5,000+</div>
               <div className="text-sm text-muted-foreground">Gigs Completed</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-secondary mb-2" data-testid="stat-rate">98%</div>
+              <div className="text-4xl md:text-5xl font-bold text-secondary mb-2" data-testid="stat-rate">96%</div>
               <div className="text-sm text-muted-foreground">Satisfaction Rate</div>
             </div>
           </div>
@@ -262,15 +262,15 @@ export default function Landing() {
                   ))}
                 </div>
                 <p className="text-foreground mb-6">
-                  "SkillBridge helped me land my first freelance gig! I built a website for a local coffee shop and gained real experience."
+                  "SkillBridge helped me land my first freelance gig! I built a website for a local restaurant in Mumbai and gained real experience."
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
-                    SM
+                    AP
                   </div>
                   <div>
-                    <div className="font-semibold text-foreground">Sarah Martinez</div>
-                    <div className="text-sm text-muted-foreground">Computer Science Student</div>
+                    <div className="font-semibold text-foreground">Arjun Patel</div>
+                    <div className="text-sm text-muted-foreground">Computer Science Student, IIT Delhi</div>
                   </div>
                 </div>
               </CardContent>
@@ -284,15 +284,15 @@ export default function Landing() {
                   ))}
                 </div>
                 <p className="text-foreground mb-6">
-                  "As a small business owner, finding affordable help was always a challenge. SkillBridge connected me with talented students who delivered great work."
+                  "As a small business owner in Bangalore, finding affordable help was always a challenge. SkillBridge connected me with talented students who delivered great work."
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-primary-foreground font-bold">
-                    JC
+                    RK
                   </div>
                   <div>
-                    <div className="font-semibold text-foreground">James Chen</div>
-                    <div className="text-sm text-muted-foreground">Local Cafe Owner</div>
+                    <div className="font-semibold text-foreground">Rajesh Kumar</div>
+                    <div className="text-sm text-muted-foreground">E-commerce Store Owner</div>
                   </div>
                 </div>
               </CardContent>
@@ -306,15 +306,15 @@ export default function Landing() {
                   ))}
                 </div>
                 <p className="text-foreground mb-6">
-                  "I've completed over 15 gigs on SkillBridge. It's perfect for earning money between classes while building my design portfolio!"
+                  "I've completed over 25 gigs on SkillBridge. It's perfect for earning money between classes while building my design portfolio!"
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
-                    ER
+                    PS
                   </div>
                   <div>
-                    <div className="font-semibold text-foreground">Emily Rodriguez</div>
-                    <div className="text-sm text-muted-foreground">Graphic Design Student</div>
+                    <div className="font-semibold text-foreground">Priya Sharma</div>
+                    <div className="text-sm text-muted-foreground">Graphic Design Student, NID Ahmedabad</div>
                   </div>
                 </div>
               </CardContent>
@@ -489,7 +489,7 @@ export default function Landing() {
                 </span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Connecting local youth to meaningful micro-opportunities since 2025.
+                Connecting Indian youth to meaningful micro-opportunities since 2023.
               </p>
             </div>
 
@@ -526,7 +526,7 @@ export default function Landing() {
 
           <div className="border-t pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">
-              © 2025 SkillBridge. All rights reserved.
+              © 2025 SkillBridge India. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm text-muted-foreground">
               <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy</Link>

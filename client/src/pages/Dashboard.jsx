@@ -437,7 +437,7 @@ export default function Dashboard() {
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Total Budget</p>
                       <p className="text-3xl font-bold text-foreground mt-2">
-                        ${businessStats?.totalBudget || 0}
+                        ₹{businessStats?.totalBudget || 0}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">Offered across gigs</p>
                     </div>

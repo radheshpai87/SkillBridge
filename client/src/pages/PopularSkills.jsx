@@ -74,13 +74,13 @@ export default function PopularSkills() {
     }
   ];
 
-  const topSkills = [
-    { name: "Web Development", count: 1250, growth: "+45%" },
-    { name: "Content Creation", count: 980, growth: "+32%" },
-    { name: "Social Media Marketing", count: 875, growth: "+28%" },
-    { name: "UI/UX Design", count: 720, growth: "+35%" },
-    { name: "Digital Marketing", count: 650, growth: "+22%" },
-    { name: "Video Editing", count: 580, growth: "+18%" }
+    const topSkills = [
+    { name: "Web Development", growth: "+45%", avgRate: "₹600/hr", demand: "High" },
+    { name: "Digital Marketing", growth: "+38%", avgRate: "₹500/hr", demand: "High" },
+    { name: "Mobile App Development", growth: "+52%", avgRate: "₹700/hr", demand: "Very High" },
+    { name: "Data Entry", growth: "+25%", avgRate: "₹300/hr", demand: "Medium" },
+    { name: "Content Writing", growth: "+35%", avgRate: "₹400/hr", demand: "High" },
+    { name: "Graphic Design", growth: "+40%", avgRate: "₹550/hr", demand: "High" }
   ];
 
   const getLevelColor = (level) => {

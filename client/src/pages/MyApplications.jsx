@@ -178,7 +178,7 @@ export default function MyApplications() {
                           <div className="space-y-2">
                             <div className="flex items-center gap-2 text-sm">
                               <DollarSign className="w-4 h-4 text-muted-foreground" />
-                              <span className="font-semibold text-foreground">${app.gig?.budget}</span>
+                              <span className="font-semibold text-foreground">₹{app.gig?.budget}</span>
                             </div>
 
                             <div className="flex items-center gap-2 text-sm">

@@ -22,7 +22,7 @@ export default function Benefits() {
     {
       icon: <DollarSign className="w-8 h-8 text-primary" />,
       title: "Earn Competitive Rates",
-      description: "Get paid fairly for your skills and experience. Our platform ensures you receive market-rate compensation for quality work.",
+      description: "Get paid fairly for your skills and experience. Our platform ensures you receive market-rate compensation for quality work in the Indian market.",
       details: ["Transparent pricing", "Quick payouts", "No hidden fees"]
     },
     {
@@ -97,10 +97,10 @@ export default function Benefits() {
   ];
 
   const stats = [
-    { number: "10,000+", label: "Active Students" },
+    { number: "50,000+", label: "Active Students" },
     { number: "2,500+", label: "Business Partners" },
-    { number: "50,000+", label: "Gigs Completed" },
-    { number: "98%", label: "Satisfaction Rate" }
+    { number: "75,000+", label: "Gigs Completed" },
+    { number: "95%", label: "Satisfaction Rate" }
   ];
 
   return (

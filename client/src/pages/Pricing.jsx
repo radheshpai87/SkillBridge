@@ -19,7 +19,7 @@ export default function Pricing() {
   const plans = [
     {
       name: "Free",
-      price: "$0",
+      price: "₹0",
       period: "forever",
       description: "Perfect for getting started and exploring the platform",
       icon: <Users className="w-8 h-8 text-muted-foreground" />,
@@ -42,7 +42,7 @@ export default function Pricing() {
     },
     {
       name: "Pro",
-      price: "$9.99",
+      price: "₹299",
       period: "month",
       description: "Ideal for serious students building their career",
       icon: <Zap className="w-8 h-8 text-primary" />,
@@ -64,7 +64,7 @@ export default function Pricing() {
     },
     {
       name: "Business",
-      price: "$29.99",
+      price: "₹899",
       period: "month",
       description: "For businesses hiring regularly and scaling teams",
       icon: <Crown className="w-8 h-8 text-secondary" />,
@@ -117,21 +117,21 @@ export default function Pricing() {
 
   const testimonials = [
     {
-      name: "Sarah Johnson",
+      name: "Rahul Singh",
       role: "Computer Science Student",
       content: "The Pro plan helped me land my first freelance gig. The enhanced profile visibility made all the difference!",
       rating: 5
     },
     {
-      name: "TechCorp Solutions",
+      name: "TechSolutions India",
       role: "Small Business Owner",
       content: "The Business plan's bulk hiring tools saved us hours of work. We found amazing talent quickly and affordably.",
       rating: 5
     },
     {
-      name: "Mike Chen",
+      name: "Ananya Gupta",
       role: "Marketing Student",
-      content: "Started with Free, upgraded to Pro, and now I'm making $25/hour. This platform changed my college experience.",
+      content: "Started with Free, upgraded to Pro, and now I'm making ₹800/hour. This platform changed my college experience.",
       rating: 5
     }
   ];

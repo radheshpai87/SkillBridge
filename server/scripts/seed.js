@@ -6,167 +6,167 @@ import logger from '../utils/logger.js';
 
 const sampleStudents = [
   {
-    name: 'Alex Chen',
-    email: 'alex.chen@student.edu',
+    name: 'Arjun Sharma',
+    email: 'arjun.sharma@student.edu',
     password: 'password123',
     role: 'student',
     skills: ['JavaScript', 'React', 'Web Development'],
-    bio: 'Computer science student passionate about building web applications. Available for frontend development and tutoring.'
+    bio: 'Computer science student at IIT Delhi passionate about building web applications. Available for frontend development and coding tutorials.'
   },
   {
-    name: 'Maria Garcia',
-    email: 'maria.garcia@student.edu',
+    name: 'Priya Venkatesan',
+    email: 'priya.venkatesan@student.edu',
     password: 'password123',
     role: 'student',
     skills: ['Graphic Design', 'Adobe Photoshop', 'Canva'],
-    bio: 'Design enthusiast with 2 years of experience in creating social media content and marketing materials.'
+    bio: 'Design student from NID Ahmedabad with 2 years of experience in creating social media content and marketing materials for Indian brands.'
   },
   {
-    name: 'James Wilson',
-    email: 'james.wilson@student.edu',
+    name: 'Rohan Kumar',
+    email: 'rohan.kumar@student.edu',
     password: 'password123',
     role: 'student',
     skills: ['Content Writing', 'Social Media', 'Copywriting'],
-    bio: 'Marketing major specializing in content creation and social media management. Strong writing skills.'
+    bio: 'English literature student specializing in content creation and social media management. Experience with Indian consumer brands.'
   },
   {
-    name: 'Emily Davis',
-    email: 'emily.davis@student.edu',
+    name: 'Ananya Singh',
+    email: 'ananya.singh@student.edu',
     password: 'password123',
     role: 'student',
     skills: ['Photography', 'Video Editing', 'Adobe Premiere'],
-    bio: 'Film student with professional photography equipment. Love capturing moments and creating compelling video content.'
+    bio: 'Film student from FTII Pune with professional photography equipment. Love capturing Indian culture and creating compelling video content.'
   },
   {
-    name: 'Ryan Patel',
-    email: 'ryan.patel@student.edu',
+    name: 'Vikram Patel',
+    email: 'vikram.patel@student.edu',
     password: 'password123',
     role: 'student',
     skills: ['Python', 'Data Analysis', 'Excel'],
-    bio: 'Data science student experienced in analyzing business data and creating reports. Strong Excel and Python skills.'
+    bio: 'Data science student experienced in analyzing business data and creating reports for Indian startups. Strong Excel and Python skills.'
   },
   {
-    name: 'Sophie Taylor',
-    email: 'sophie.taylor@student.edu',
+    name: 'Kavya Reddy',
+    email: 'kavya.reddy@student.edu',
     password: 'password123',
     role: 'student',
-    skills: ['Tutoring', 'Mathematics', 'SAT Prep'],
-    bio: 'Education major with experience tutoring high school students in math and test preparation.'
+    skills: ['Tutoring', 'Mathematics', 'JEE Prep'],
+    bio: 'Mathematics major with experience tutoring high school students in math and JEE preparation. Familiar with Indian education system.'
   }
 ];
 
 const sampleBusinesses = [
   {
-    name: 'Sarah Johnson',
-    email: 'sarah@localcafe.com',
+    name: 'Rajesh Kumar',
+    email: 'rajesh@spicecafe.com',
     password: 'password123',
     role: 'business',
-    companyName: 'Downtown Coffee House',
-    description: 'Cozy coffee shop in the heart of downtown, serving artisan coffee and pastries.'
+    companyName: 'Spice Route Café',
+    description: 'Authentic Indian cuisine café in Bangalore serving traditional dishes and modern fusion food.'
   },
   {
-    name: 'Mike Anderson',
-    email: 'mike@fitnessstudio.com',
+    name: 'Meera Iyer',
+    email: 'meera@fitnesstemple.com',
     password: 'password123',
     role: 'business',
-    companyName: 'Anderson Fitness Studio',
-    description: 'Local fitness studio offering personal training and group classes.'
+    companyName: 'Fitness Temple',
+    description: 'Modern fitness studio in Mumbai offering yoga, pilates, and traditional Indian wellness practices.'
   },
   {
-    name: 'Lisa Chen',
-    email: 'lisa@boutique.com',
+    name: 'Amit Agarwal',
+    email: 'amit@ethnicsarees.com',
     password: 'password123',
     role: 'business',
-    companyName: 'Trendy Boutique',
-    description: 'Fashion boutique specializing in sustainable and locally-made clothing.'
+    companyName: 'Ethnic Sarees & Crafts',
+    description: 'Traditional handloom saree boutique specializing in authentic Indian textiles and cultural garments.'
   },
   {
-    name: 'David Martinez',
-    email: 'david@lawoffice.com',
+    name: 'Sunita Sharma',
+    email: 'sunita@legalconsultants.com',
     password: 'password123',
     role: 'business',
-    companyName: 'Martinez Law Office',
-    description: 'Small law firm specializing in family law and estate planning.'
+    companyName: 'Sharma Legal Consultants',
+    description: 'Legal firm in Delhi specializing in corporate law, intellectual property, and startup compliance.'
   },
   {
-    name: 'Jennifer Lee',
-    email: 'jennifer@bakery.com',
+    name: 'Vijay Singh',
+    email: 'vijay@sweetdelights.com',
     password: 'password123',
     role: 'business',
-    companyName: 'Sweet Treats Bakery',
-    description: 'Family-owned bakery creating custom cakes and pastries for all occasions.'
+    companyName: 'Sweet Delights Bakery',
+    description: 'Family-owned bakery in Chennai creating traditional Indian sweets, cakes, and fusion desserts.'
   }
 ];
 
 const sampleGigs = [
   {
-    title: 'Social Media Content Creator',
-    description: 'Looking for a creative student to help manage our Instagram and Facebook pages. Need 3-5 posts per week showcasing our daily specials and coffee culture.',
-    budget: 150,
-    location: 'Downtown',
+    title: 'Social Media Content Creator for Indian Cuisine',
+    description: 'Looking for a creative student to help manage our Instagram and Facebook pages. Need 3-5 posts per week showcasing our authentic Indian dishes, traditional recipes, and café culture. Experience with Indian food photography preferred.',
+    budget: 2500,
+    location: 'Bangalore',
     requiredSkills: ['Social Media', 'Content Writing', 'Photography']
   },
   {
-    title: 'Website Development Help',
-    description: 'Need a student developer to help build a simple website for our coffee shop using React and JavaScript. Should include menu, location, and online ordering integration. Experience with web development and frontend frameworks required.',
-    budget: 500,
-    location: 'Downtown',
+    title: 'E-commerce Website Development',
+    description: 'Need a student developer to help build an e-commerce website for our saree boutique using React and JavaScript. Should include product catalog, payment integration with Indian banks, and shipping calculator. Experience with Indian e-commerce platforms like Shopify India preferred.',
+    budget: 8000,
+    location: 'Mumbai',
     requiredSkills: ['JavaScript', 'Web Development', 'React']
   },
   {
-    title: 'Fitness Class Photography',
-    description: 'Seeking photographer to capture high-quality images during our group fitness classes for marketing materials and social media.',
-    budget: 200,
-    location: 'Midtown',
+    title: 'Yoga Class Photography & Video',
+    description: 'Seeking photographer/videographer to capture high-quality images and videos during our traditional yoga and wellness classes for marketing materials and social media. Understanding of Indian wellness culture appreciated.',
+    budget: 3500,
+    location: 'Mumbai',
     requiredSkills: ['Photography', 'Video Editing']
   },
   {
-    title: 'Marketing Flyer Design',
-    description: 'Need creative designs for promotional flyers for our new class schedule. Should be eye-catching and professional.',
-    budget: 100,
-    location: 'Midtown',
+    title: 'Festival Marketing Materials Design',
+    description: 'Need creative designs for promotional posters and social media graphics for upcoming Indian festivals. Should incorporate traditional motifs and modern design elements for Diwali and Holi campaigns.',
+    budget: 2000,
+    location: 'Delhi',
     requiredSkills: ['Graphic Design', 'Adobe Photoshop', 'Canva']
   },
   {
-    title: 'Product Photography for Online Store',
-    description: 'Looking for someone to photograph our clothing items for our online store. Need clean, professional product shots.',
-    budget: 250,
-    location: 'East Side',
+    title: 'Handloom Product Photography',
+    description: 'Looking for someone to photograph our traditional sarees and handloom products for our online store. Need clean, professional product shots that showcase the intricate craftsmanship and traditional designs.',
+    budget: 4000,
+    location: 'Chennai',
     requiredSkills: ['Photography', 'Graphic Design']
   },
   {
-    title: 'Instagram Reels Creator',
-    description: 'Help us create engaging Instagram Reels showcasing our boutique and fashion tips. Need 2-3 reels per week.',
-    budget: 175,
-    location: 'East Side',
+    title: 'Instagram Reels for Cultural Content',
+    description: 'Help us create engaging Instagram Reels showcasing traditional Indian fashion, cultural stories, and fashion tips. Need 2-3 reels per week featuring our boutique collection and Indian heritage.',
+    budget: 3000,
+    location: 'Delhi',
     requiredSkills: ['Video Editing', 'Social Media', 'Content Writing']
   },
   {
-    title: 'Administrative Data Entry',
-    description: 'Need help organizing client files and entering data into our case management system. Experience with Excel, data analysis, and backend systems preferred. Detail-oriented student required.',
-    budget: 120,
-    location: 'West End',
+    title: 'Legal Document Data Management',
+    description: 'Need help organizing client case files and entering data into our legal case management system. Experience with Indian legal documentation, Excel, and data analysis preferred. Knowledge of Indian corporate law is a plus.',
+    budget: 2500,
+    location: 'Delhi',
     requiredSkills: ['Data Analysis', 'Excel']
   },
   {
-    title: 'Website Content Writing & Backend Updates',
-    description: 'Looking for a writer with backend development experience to create engaging content for our law office website, update our content management system, and write blog posts. Knowledge of web development and backend systems a plus.',
-    budget: 200,
-    location: 'West End',
+    title: 'Legal Website Content & Blog Writing',
+    description: 'Looking for a writer with legal knowledge to create engaging content for our law firm website, write blog posts about Indian corporate law updates, and update our content management system. Understanding of Indian legal system preferred.',
+    budget: 3500,
+    location: 'Bangalore',
     requiredSkills: ['Content Writing', 'Copywriting']
   },
   {
-    title: 'Bakery Social Media Manager',
-    description: 'Manage our social media presence by posting daily specials, custom cake photos, and engaging with customers online.',
-    budget: 180,
-    location: 'South Side',
+    title: 'Traditional Sweets Social Media Manager',
+    description: 'Manage our social media presence by posting daily specials, traditional sweet recipes, festival offerings, and engaging with customers online. Experience with Indian food industry preferred.',
+    budget: 3200,
+    location: 'Chennai',
     requiredSkills: ['Social Media', 'Photography', 'Content Writing']
   },
   {
-    title: 'Recipe Card Design',
-    description: 'Design beautiful recipe cards for our signature items to give away to customers. Should match our brand aesthetic.',
-    budget: 150,
-    location: 'South Side',
+    title: 'Recipe Cards for Indian Sweets',
+    description: 'Design beautiful recipe cards for our signature traditional Indian sweets and desserts to give away to customers. Should incorporate Indian cultural elements and match our traditional brand aesthetic.',
+    budget: 2500,
+    location: 'Chennai',
     requiredSkills: ['Graphic Design', 'Canva']
   }
 ];
@@ -274,8 +274,8 @@ async function seedDatabase() {
     logger.info(`   Gigs: ${createdGigs.length}`);
     logger.info(`   Applications: ${applicationCount}`);
     logger.info('\n🔐 Test Credentials:');
-    logger.info('   Student: alex.chen@student.edu / password123');
-    logger.info('   Business: sarah@localcafe.com / password123');
+    logger.info('   Student: arjun.sharma@student.edu / password123');
+    logger.info('   Business: rajesh@spicecafe.com / password123');
     
     process.exit(0);
   } catch (error) {
