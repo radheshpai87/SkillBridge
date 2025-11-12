@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { PublicHeader } from '@/components/PublicHeader';
 import { 
-  Briefcase, TrendingUp, Users, Zap, GraduationCap, Building2, 
+  TrendingUp, Users, Zap, GraduationCap, Building2, 
   CheckCircle2, Star, Clock, DollarSign, Search, MessageSquare,
   Code, Palette, Megaphone, Camera, FileEdit, Laptop
 } from 'lucide-react';
@@ -481,9 +481,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-1">
               <div className="flex items-center space-x-2 mb-4">
-                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary">
-                  <Briefcase className="w-6 h-6 text-primary-foreground" />
-                </div>
+                <img src="/favicon.svg" alt="SkillBridge Logo" className="w-10 h-10" />
                 <span className="text-xl font-bold text-primary">
                   SkillBridge
                 </span>
