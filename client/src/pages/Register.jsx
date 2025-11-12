@@ -317,13 +317,13 @@ export default function Register() {
         <CardFooter className="flex justify-center border-t pt-6">
           <p className="text-sm text-muted-foreground">
             Already have an account?{' '}
-            <a
-              href="/login"
-              className="font-semibold text-primary hover:underline"
+            <button
+              onClick={() => setLocation('/login')}
+              className="font-semibold text-primary hover:underline bg-transparent border-none p-0 cursor-pointer"
               data-testid="link-login"
             >
               Sign in
-            </a>
+            </button>
           </p>
         </CardFooter>
       </Card>

@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
-import { useLocation } from 'wouter';
+import { useLocation, Link } from 'wouter';
 import { Navbar } from '@/components/Navbar';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -246,9 +246,9 @@ export default function MyApplications() {
                   Start applying to gigs to see them here
                 </p>
                 <Button asChild>
-                  <a href="/browse" data-testid="link-browse-gigs">
+                  <Link href="/browse" data-testid="link-browse-gigs">
                     Browse Gigs
-                  </a>
+                  </Link>
                 </Button>
               </CardContent>
             </Card>

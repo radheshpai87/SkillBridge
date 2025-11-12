@@ -496,8 +496,8 @@ export default function Landing() {
             <div>
               <h4 className="font-semibold text-foreground mb-4">For Students</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="/browse" className="hover:text-primary transition-colors">Browse Gigs</a></li>
-                <li><a href="/register" className="hover:text-primary transition-colors">Sign Up</a></li>
+                <li><Link href="/browse" className="hover:text-primary transition-colors">Browse Gigs</Link></li>
+                <li><Link href="/register" className="hover:text-primary transition-colors">Sign Up</Link></li>
                 <li><a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a></li>
                 <li><a href="#skills" className="hover:text-primary transition-colors">Popular Skills</a></li>
               </ul>
@@ -506,8 +506,8 @@ export default function Landing() {
             <div>
               <h4 className="font-semibold text-foreground mb-4">For Businesses</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="/register" className="hover:text-primary transition-colors">Post a Gig</a></li>
-                <li><a href="/register" className="hover:text-primary transition-colors">Find Talent</a></li>
+                <li><Link href="/register" className="hover:text-primary transition-colors">Post a Gig</Link></li>
+                <li><Link href="/register" className="hover:text-primary transition-colors">Find Talent</Link></li>
                 <li><a href="#benefits" className="hover:text-primary transition-colors">Benefits</a></li>
                 <li><a href="#pricing" className="hover:text-primary transition-colors">Pricing</a></li>
               </ul>
