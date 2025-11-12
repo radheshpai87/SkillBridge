@@ -498,8 +498,8 @@ export default function Landing() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/browse" className="hover:text-primary transition-colors">Browse Gigs</Link></li>
                 <li><Link href="/register" className="hover:text-primary transition-colors">Sign Up</Link></li>
-                <li><a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a></li>
-                <li><a href="#skills" className="hover:text-primary transition-colors">Popular Skills</a></li>
+                <li><Link href="/how-it-works" className="hover:text-primary transition-colors">How It Works</Link></li>
+                <li><Link href="/popular-skills" className="hover:text-primary transition-colors">Popular Skills</Link></li>
               </ul>
             </div>
 
@@ -508,18 +508,18 @@ export default function Landing() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/register" className="hover:text-primary transition-colors">Post a Gig</Link></li>
                 <li><Link href="/register" className="hover:text-primary transition-colors">Find Talent</Link></li>
-                <li><a href="#benefits" className="hover:text-primary transition-colors">Benefits</a></li>
-                <li><a href="#pricing" className="hover:text-primary transition-colors">Pricing</a></li>
+                <li><Link href="/benefits" className="hover:text-primary transition-colors">Benefits</Link></li>
+                <li><Link href="/pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold text-foreground mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#about" className="hover:text-primary transition-colors">About Us</a></li>
-                <li><a href="#contact" className="hover:text-primary transition-colors">Contact</a></li>
-                <li><a href="#privacy" className="hover:text-primary transition-colors">Privacy Policy</a></li>
-                <li><a href="#terms" className="hover:text-primary transition-colors">Terms of Service</a></li>
+                <li><Link href="/about-us" className="hover:text-primary transition-colors">About Us</Link></li>
+                <li><Link href="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
+                <li><Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
+                <li><Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link></li>
               </ul>
             </div>
           </div>
@@ -529,9 +529,9 @@ export default function Landing() {
               © 2025 SkillBridge. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm text-muted-foreground">
-              <a href="#privacy" className="hover:text-primary transition-colors">Privacy</a>
-              <a href="#terms" className="hover:text-primary transition-colors">Terms</a>
-              <a href="#contact" className="hover:text-primary transition-colors">Contact</a>
+              <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy</Link>
+              <Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms</Link>
+              <Link href="/contact" className="hover:text-primary transition-colors">Contact</Link>
             </div>
           </div>
         </div>
