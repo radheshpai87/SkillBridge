@@ -5,12 +5,28 @@ import { Navbar } from '@/components/Navbar';
 import { GigCard } from '@/components/GigCard';
 import { SkillBadge } from '@/components/SkillBadge';
 import { ManageGigDialog } from '@/components/ManageGigDialog';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
-import { Briefcase, TrendingUp, Users, CheckCircle } from 'lucide-react';
+import { 
+  Briefcase, 
+  TrendingUp, 
+  Users, 
+  CheckCircle, 
+  Clock, 
+  XCircle, 
+  Award,
+  Target,
+  Eye,
+  Calendar,
+  DollarSign,
+  Activity,
+  Star
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 export default function Dashboard() {
@@ -40,6 +56,37 @@ export default function Dashboard() {
       return acc;
     }, {});
   }, [myApplications]);
+
+  // Student Statistics
+  const studentStats = useMemo(() => {
+    if (!myApplications || user?.role !== 'student') return null;
+    
+    const total = myApplications.length;
+    const pending = myApplications.filter(app => app.status === 'pending').length;
+    const accepted = myApplications.filter(app => app.status === 'accepted').length;
+    const rejected = myApplications.filter(app => app.status === 'rejected').length;
+    const acceptanceRate = total > 0 ? Math.round((accepted / total) * 100) : 0;
+    
+    return { total, pending, accepted, rejected, acceptanceRate };
+  }, [myApplications, user]);
+
+  // Business Statistics
+  const businessStats = useMemo(() => {
+    if (!gigs || user?.role !== 'business') return null;
+    
+    const myGigs = gigs.filter(g => g.postedBy === user.id);
+    const totalGigs = myGigs.length;
+    const totalApplicants = myGigs.reduce((sum, gig) => {
+      const applicants = Array.isArray(gig.applicants) ? gig.applicants : [];
+      return sum + applicants.length;
+    }, 0);
+    const avgApplicantsPerGig = totalGigs > 0 ? Math.round(totalApplicants / totalGigs) : 0;
+    
+    // Calculate total budget offered
+    const totalBudget = myGigs.reduce((sum, gig) => sum + (gig.budget || 0), 0);
+    
+    return { totalGigs, totalApplicants, avgApplicantsPerGig, totalBudget };
+  }, [gigs, user]);
 
   const applyMutation = useMutation({
     mutationFn: async (gigId) => {
@@ -106,35 +153,153 @@ export default function Dashboard() {
         {/* Student Dashboard */}
         {user.role === 'student' && (
           <div className="space-y-8">
-            {/* Profile Card */}
-            <Card className="overflow-visible">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <h2 className="text-2xl font-bold text-foreground">Your Profile</h2>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {user.bio && (
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground mb-2">Bio</h3>
-                    <p className="text-foreground" data-testid="text-bio">{user.bio}</p>
-                  </div>
-                )}
-                
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground mb-3">Skills</h3>
-                  {userSkills.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {userSkills.map((skill) => (
-                        <SkillBadge key={skill} skill={skill} />
-                      ))}
+            {/* Student Stats Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card className="overflow-visible">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Applications</p>
+                      <p className="text-3xl font-bold text-foreground mt-2">
+                        {studentStats?.total || 0}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">Total submitted</p>
                     </div>
-                  ) : (
-                    <div className="text-sm text-muted-foreground italic">
-                      No skills added yet. Add skills to see matched opportunities!
+                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
+                      <Briefcase className="w-6 h-6 text-primary" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="overflow-visible">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Pending</p>
+                      <p className="text-3xl font-bold text-foreground mt-2">
+                        {studentStats?.pending || 0}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">Under review</p>
+                    </div>
+                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-yellow-500/10">
+                      <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-500" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="overflow-visible">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Accepted</p>
+                      <p className="text-3xl font-bold text-foreground mt-2">
+                        {studentStats?.accepted || 0}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">Successfully hired</p>
+                    </div>
+                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-green-500/10">
+                      <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-500" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="overflow-visible">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Success Rate</p>
+                      <p className="text-3xl font-bold text-foreground mt-2">
+                        {studentStats?.acceptanceRate || 0}%
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">Acceptance rate</p>
+                    </div>
+                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-secondary/10">
+                      <Target className="w-6 h-6 text-secondary" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Profile Card with Enhanced UI */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card className="overflow-visible lg:col-span-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Award className="w-5 h-5 text-primary" />
+                    Your Profile
+                  </CardTitle>
+                  <CardDescription>Showcase your skills and experience</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {user.bio && (
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-2">Bio</h3>
+                      <p className="text-foreground leading-relaxed" data-testid="text-bio">{user.bio}</p>
                     </div>
                   )}
-                </div>
-              </CardContent>
-            </Card>
+                  
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-medium text-muted-foreground">Skills</h3>
+                      <Badge variant="secondary">{userSkills.length} skills</Badge>
+                    </div>
+                    {userSkills.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {userSkills.map((skill) => (
+                          <SkillBadge key={skill} skill={skill} />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-sm text-muted-foreground italic bg-muted/30 p-4 rounded-lg">
+                        💡 No skills added yet. Add skills to see matched opportunities!
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick Actions */}
+              <Card className="overflow-visible">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-primary" />
+                    Quick Actions
+                  </CardTitle>
+                  <CardDescription>Navigate to key sections</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button 
+                    className="w-full justify-start gap-2" 
+                    variant="outline"
+                    onClick={() => setLocation('/browse')}
+                  >
+                    <Eye className="w-4 h-4" />
+                    Browse All Gigs
+                  </Button>
+                  <Button 
+                    className="w-full justify-start gap-2" 
+                    variant="outline"
+                    onClick={() => setLocation('/applications')}
+                  >
+                    <Calendar className="w-4 h-4" />
+                    My Applications
+                  </Button>
+                  {matchedGigs && matchedGigs.length > 0 && (
+                    <div className="pt-2 border-t">
+                      <p className="text-sm text-muted-foreground mb-2">
+                        <Star className="w-4 h-4 inline mr-1 text-yellow-500" />
+                        {matchedGigs.length} new matches!
+                      </p>
+                      <Progress value={(matchedGigs.length / 10) * 100} className="h-2" />
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
 
             {/* Matched Gigs */}
             <div>
@@ -208,16 +373,17 @@ export default function Dashboard() {
         {/* Business Dashboard */}
         {user.role === 'business' && (
           <div className="space-y-8">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Enhanced Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card className="overflow-visible">
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Posted Gigs</p>
                       <p className="text-3xl font-bold text-foreground mt-2" data-testid="text-posted-count">
-                        {myGigs.length}
+                        {businessStats?.totalGigs || 0}
                       </p>
+                      <p className="text-xs text-muted-foreground mt-1">Total opportunities</p>
                     </div>
                     <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
                       <Briefcase className="w-6 h-6 text-primary" />
@@ -232,8 +398,9 @@ export default function Dashboard() {
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Total Applicants</p>
                       <p className="text-3xl font-bold text-foreground mt-2" data-testid="text-applicant-total">
-                        {totalApplicants}
+                        {businessStats?.totalApplicants || 0}
                       </p>
+                      <p className="text-xs text-muted-foreground mt-1">All-time applications</p>
                     </div>
                     <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-secondary/10">
                       <Users className="w-6 h-6 text-secondary" />
@@ -246,14 +413,113 @@ export default function Dashboard() {
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground">Active Gigs</p>
-                      <p className="text-3xl font-bold text-foreground mt-2" data-testid="text-active-count">
-                        {myGigs.length}
+                      <p className="text-sm font-medium text-muted-foreground">Avg. Applicants</p>
+                      <p className="text-3xl font-bold text-foreground mt-2">
+                        {businessStats?.avgApplicantsPerGig || 0}
                       </p>
+                      <p className="text-xs text-muted-foreground mt-1">Per gig</p>
                     </div>
-                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-accent">
-                      <TrendingUp className="w-6 h-6 text-accent-foreground" />
+                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-green-500/10">
+                      <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-500" />
                     </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="overflow-visible">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Total Budget</p>
+                      <p className="text-3xl font-bold text-foreground mt-2">
+                        ${businessStats?.totalBudget || 0}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">Offered across gigs</p>
+                    </div>
+                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-yellow-500/10">
+                      <DollarSign className="w-6 h-6 text-yellow-600 dark:text-yellow-500" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Company Overview */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card className="overflow-visible lg:col-span-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Award className="w-5 h-5 text-primary" />
+                    Company Profile
+                  </CardTitle>
+                  <CardDescription>Your business information</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {user.companyName && (
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-2">Company Name</h3>
+                      <p className="text-lg font-semibold text-foreground">{user.companyName}</p>
+                    </div>
+                  )}
+                  {user.description && (
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-2">Description</h3>
+                      <p className="text-foreground leading-relaxed">{user.description}</p>
+                    </div>
+                  )}
+                  {!user.companyName && !user.description && (
+                    <div className="text-sm text-muted-foreground italic bg-muted/30 p-4 rounded-lg">
+                      💡 Add company details to attract more talent!
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Performance Insights */}
+              <Card className="overflow-visible">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-primary" />
+                    Performance
+                  </CardTitle>
+                  <CardDescription>Your hiring metrics</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-sm font-medium">Interest Rate</p>
+                      <Badge variant="secondary">
+                        {businessStats?.avgApplicantsPerGig || 0}/gig
+                      </Badge>
+                    </div>
+                    <Progress 
+                      value={Math.min((businessStats?.avgApplicantsPerGig || 0) * 20, 100)} 
+                      className="h-2" 
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {businessStats?.avgApplicantsPerGig >= 5 ? 'Excellent!' : 
+                       businessStats?.avgApplicantsPerGig >= 3 ? 'Good' : 
+                       'Keep posting!'}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 border-t space-y-3">
+                    <Button 
+                      className="w-full justify-start gap-2" 
+                      variant="outline"
+                      onClick={() => setLocation('/browse')}
+                    >
+                      <Plus className="w-4 h-4" />
+                      Post New Gig
+                    </Button>
+                    <Button 
+                      className="w-full justify-start gap-2" 
+                      variant="outline"
+                      onClick={() => setLocation('/browse')}
+                    >
+                      <Eye className="w-4 h-4" />
+                      Browse Talent
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

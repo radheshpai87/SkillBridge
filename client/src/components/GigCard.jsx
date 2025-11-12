@@ -18,6 +18,9 @@ const statusLabels = {
 };
 
 export function GigCard({ gig, onApply, onManage, applicationStatus, applicationId, isOwner, applicantCount }) {
+  // Only show action buttons if there's an action available
+  const showActionButton = isOwner || onApply;
+
   return (
     <Card className="hover-elevate transition-all duration-200 overflow-visible" data-testid={`card-gig-${gig.id}`}>
       <CardHeader className="space-y-3">
@@ -63,32 +66,34 @@ export function GigCard({ gig, onApply, onManage, applicationStatus, application
         )}
       </CardContent>
 
-      <CardFooter>
-        {isOwner ? (
-          <Button 
-            onClick={() => onManage?.(gig.id)} 
-            variant="outline" 
-            className="w-full"
-            data-testid={`button-manage-${gig.id}`}
-          >
-            Manage Gig
-          </Button>
-        ) : (
-          <Button
-            onClick={() => onApply?.(gig.id)}
-            disabled={!!applicationStatus}
-            className="w-full"
-            data-testid={`button-apply-${gig.id}`}
-          >
-            {applicationStatus ? 
-              (applicationStatus === 'accepted' ? 'Accepted ✓' : 
-               applicationStatus === 'rejected' ? 'Rejected' :
-               applicationStatus === 'completed' ? 'Completed' :
-               'Applied') 
-              : 'Apply Now'}
-          </Button>
-        )}
-      </CardFooter>
+      {showActionButton && (
+        <CardFooter>
+          {isOwner ? (
+            <Button 
+              onClick={() => onManage?.(gig.id)} 
+              variant="outline" 
+              className="w-full"
+              data-testid={`button-manage-${gig.id}`}
+            >
+              Manage Gig
+            </Button>
+          ) : (
+            <Button
+              onClick={() => onApply?.(gig.id)}
+              disabled={!!applicationStatus}
+              className="w-full"
+              data-testid={`button-apply-${gig.id}`}
+            >
+              {applicationStatus ? 
+                (applicationStatus === 'accepted' ? 'Accepted ✓' : 
+                 applicationStatus === 'rejected' ? 'Rejected' :
+                 applicationStatus === 'completed' ? 'Completed' :
+                 'Applied') 
+                : 'Apply Now'}
+            </Button>
+          )}
+        </CardFooter>
+      )}
     </Card>
   );
 }
