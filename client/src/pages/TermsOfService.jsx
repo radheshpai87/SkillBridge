@@ -1,11 +1,7 @@
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import       "For questions about these terms, contact us at legal@skillbridge.in",
-      "Phone: +91 80 4567-8901",
-      "Address: 123 Brigade Road, 4th Floor, Bangalore, Karnataka 560025",
-      "Our legal team is available to address concerns and questions.",
-      "We aim to respond to inquiries within 48 hours."licHeader } from '@/components/PublicHeader';
+import { PublicHeader } from '@/components/PublicHeader';
 import { FileText, ArrowRight, Scale, Calendar } from 'lucide-react';
 
 export default function TermsOfService() {

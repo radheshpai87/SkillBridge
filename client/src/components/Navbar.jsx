@@ -2,7 +2,7 @@ import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { Briefcase, LogOut, User, ClipboardList } from 'lucide-react';
+import { LogOut, User, ClipboardList } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,9 +34,7 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href={isAuthenticated ? "/dashboard" : "/"} className="flex items-center space-x-2 hover-elevate active-elevate-2 px-3 py-2 rounded-lg transition-all" data-testid="link-logo">
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary">
-              <Briefcase className="w-6 h-6 text-primary-foreground" />
-            </div>
+            <img src="/favicon.svg" alt="SkillBridge Logo" className="w-10 h-10" />
             <span className="text-2xl font-bold text-foreground">
               SkillBridge
             </span>
