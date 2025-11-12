@@ -53,11 +53,11 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-background">
       <PublicHeader showCTA={false} />
-      <div className="flex items-center justify-center bg-gradient-to-br from-accent via-background to-muted p-4" style={{ minHeight: 'calc(100vh - 64px)' }}>
+  <div className="flex items-center justify-center bg-muted p-4" style={{ minHeight: 'calc(100vh - 64px)' }}>
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="space-y-4 text-center pb-6">
           <div className="flex justify-center">
-            <div className="flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-secondary shadow-lg">
+            <div className="flex items-center justify-center w-16 h-16 rounded-xl bg-primary shadow-lg">
               <Briefcase className="w-8 h-8 text-primary-foreground" />
             </div>
           </div>

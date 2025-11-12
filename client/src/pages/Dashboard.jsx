@@ -1,10 +1,12 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { useLocation } from 'wouter';
 import { Navbar } from '@/components/Navbar';
 import { GigCard } from '@/components/GigCard';
 import { SkillBadge } from '@/components/SkillBadge';
 import { ManageGigDialog } from '@/components/ManageGigDialog';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
@@ -14,6 +16,7 @@ import { useMemo, useState } from 'react';
 export default function Dashboard() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [manageGig, setManageGig] = useState(null);
 
   const { data: gigs, isLoading } = useQuery({
@@ -40,7 +43,7 @@ export default function Dashboard() {
 
   const applyMutation = useMutation({
     mutationFn: async (gigId) => {
-      return apiRequest('POST', `/api/gigs/apply/${gigId}`);
+      return apiRequest('POST', `/api/applications/gig/${gigId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gigs/all'] });
@@ -105,7 +108,7 @@ export default function Dashboard() {
           <div className="space-y-8">
             {/* Profile Card */}
             <Card className="overflow-visible">
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <h2 className="text-2xl font-bold text-foreground">Your Profile</h2>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -116,23 +119,27 @@ export default function Dashboard() {
                   </div>
                 )}
                 
-                {userSkills.length > 0 && (
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground mb-3">Skills</h3>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-3">Skills</h3>
+                  {userSkills.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                       {userSkills.map((skill) => (
                         <SkillBadge key={skill} skill={skill} />
                       ))}
                     </div>
-                  </div>
-                )}
+                  ) : (
+                    <div className="text-sm text-muted-foreground italic">
+                      No skills added yet. Add skills to see matched opportunities!
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
 
             {/* Matched Gigs */}
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary">
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary">
                   <Briefcase className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
@@ -175,10 +182,22 @@ export default function Dashboard() {
                 <Card className="overflow-visible">
                   <CardContent className="py-12 text-center">
                     <Briefcase className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-                    <h3 className="text-xl font-semibold text-foreground mb-2">No matched gigs yet</h3>
+                    <h3 className="text-xl font-semibold text-foreground mb-2">
+                      {userSkills.length === 0 ? 'Add skills to see matches' : 'No matched gigs yet'}
+                    </h3>
                     <p className="text-muted-foreground mb-6">
-                      Add more skills to your profile or browse all available gigs
+                      {userSkills.length === 0 
+                        ? 'Add skills to your profile to see opportunities that match your expertise' 
+                        : 'Try adding more skills to your profile or browse all available gigs'}
                     </p>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setLocation('/browse')}
+                      className="gap-2"
+                    >
+                      <Briefcase className="w-4 h-4" />
+                      Browse All Gigs
+                    </Button>
                   </CardContent>
                 </Card>
               )}
@@ -243,7 +262,7 @@ export default function Dashboard() {
             {/* Posted Gigs */}
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary">
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary">
                   <CheckCircle className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>

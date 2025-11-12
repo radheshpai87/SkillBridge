@@ -218,7 +218,7 @@ export default function MyGigs() {
                                 <CardContent className="p-4">
                                   <div className="flex items-start gap-4">
                                     <Avatar className="w-12 h-12">
-                                      <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground">
+                                      <AvatarFallback className="bg-primary text-primary-foreground">
                                         {application.student ? getInitials(application.student.name) : '??'}
                                       </AvatarFallback>
                                     </Avatar>

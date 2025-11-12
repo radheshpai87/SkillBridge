@@ -81,11 +81,11 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-background">
       <PublicHeader showCTA={false} />
-      <div className="flex items-center justify-center bg-gradient-to-br from-accent via-background to-muted p-4 py-12" style={{ minHeight: 'calc(100vh - 64px)' }}>
+  <div className="flex items-center justify-center bg-muted p-4 py-12" style={{ minHeight: 'calc(100vh - 64px)' }}>
       <Card className="w-full max-w-2xl shadow-2xl">
         <CardHeader className="space-y-4 text-center pb-6">
           <div className="flex justify-center">
-            <div className="flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-secondary shadow-lg">
+            <div className="flex items-center justify-center w-16 h-16 rounded-xl bg-primary shadow-lg">
               <Briefcase className="w-8 h-8 text-primary-foreground" />
             </div>
           </div>
@@ -103,34 +103,56 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, role: 'student' })}
-                  className={`p-6 rounded-xl border-2 transition-all ${
+                  className={`group relative p-6 rounded-xl border-2 transition-all duration-300 ${
                     formData.role === 'student'
-                      ? 'border-primary bg-accent'
-                      : 'border-border hover-elevate'
+                      ? 'border-primary bg-primary/5 shadow-lg shadow-primary/20 ring-2 ring-primary/20'
+                      : 'border-border hover:border-primary/50 hover:shadow-md hover:bg-primary/5 active:scale-[0.98]'
                   }`}
                   data-testid="button-role-student"
                 >
-                  <GraduationCap className={`w-8 h-8 mx-auto mb-3 ${
-                    formData.role === 'student' ? 'text-primary' : 'text-muted-foreground'
+                  <div className={`absolute -top-2 -right-2 w-6 h-6 rounded-full transition-all duration-300 ${
+                    formData.role === 'student' 
+                      ? 'bg-primary scale-100 opacity-100' 
+                      : 'scale-0 opacity-0'
+                  }`}>
+                    <svg className="w-4 h-4 text-primary-foreground m-auto mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <GraduationCap className={`w-10 h-10 mx-auto mb-3 transition-all duration-300 ${
+                    formData.role === 'student' 
+                      ? 'text-primary scale-110' 
+                      : 'text-muted-foreground group-hover:text-primary group-hover:scale-105'
                   }`} />
-                  <p className="font-semibold text-foreground">Student</p>
+                  <p className="font-semibold text-foreground text-lg">Student</p>
                   <p className="text-xs text-muted-foreground mt-1">Looking for gigs</p>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, role: 'business' })}
-                  className={`p-6 rounded-xl border-2 transition-all ${
+                  className={`group relative p-6 rounded-xl border-2 transition-all duration-300 ${
                     formData.role === 'business'
-                      ? 'border-secondary bg-secondary/10'
-                      : 'border-border hover-elevate'
+                      ? 'border-secondary bg-secondary/5 shadow-lg shadow-secondary/20 ring-2 ring-secondary/20'
+                      : 'border-border hover:border-secondary/50 hover:shadow-md hover:bg-secondary/10 active:scale-[0.98]'
                   }`}
                   data-testid="button-role-business"
                 >
-                  <Building2 className={`w-8 h-8 mx-auto mb-3 ${
-                    formData.role === 'business' ? 'text-secondary' : 'text-muted-foreground'
+                  <div className={`absolute -top-2 -right-2 w-6 h-6 rounded-full transition-all duration-300 ${
+                    formData.role === 'business' 
+                      ? 'bg-secondary scale-100 opacity-100' 
+                      : 'scale-0 opacity-0'
+                  }`}>
+                    <svg className="w-4 h-4 text-secondary-foreground m-auto mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <Building2 className={`w-10 h-10 mx-auto mb-3 transition-all duration-300 ${
+                    formData.role === 'business' 
+                      ? 'text-secondary scale-110' 
+                      : 'text-muted-foreground group-hover:text-secondary group-hover:scale-105'
                   }`} />
-                  <p className="font-semibold text-foreground">Business</p>
+                  <p className="font-semibold text-foreground text-lg">Business</p>
                   <p className="text-xs text-muted-foreground mt-1">Post opportunities</p>
                 </button>
               </div>

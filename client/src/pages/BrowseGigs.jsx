@@ -86,7 +86,7 @@ export default function BrowseGigs() {
 
   const applyMutation = useMutation({
     mutationFn: async (gigId) => {
-      return apiRequest('POST', `/api/gigs/apply/${gigId}`);
+      return apiRequest('POST', `/api/applications/gig/${gigId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gigs/all'] });
@@ -213,8 +213,8 @@ export default function BrowseGigs() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary">
+            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary">
               <Briefcase className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>

@@ -33,63 +33,57 @@ export function Navbar() {
     <nav className="border-b bg-card">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href={isAuthenticated ? "/dashboard" : "/"}>
-            <a className="flex items-center space-x-2 hover-elevate active-elevate-2 px-3 py-2 rounded-lg transition-all" data-testid="link-logo">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary">
-                <Briefcase className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                SkillBridge
-              </span>
-            </a>
+          <Link href={isAuthenticated ? "/dashboard" : "/"} className="flex items-center space-x-2 hover-elevate active-elevate-2 px-3 py-2 rounded-lg transition-all" data-testid="link-logo">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary">
+              <Briefcase className="w-6 h-6 text-primary-foreground" />
+            </div>
+            <span className="text-2xl font-bold text-foreground">
+              SkillBridge
+            </span>
           </Link>
 
           {isAuthenticated && user && (
             <div className="flex items-center space-x-4">
-              <Link href="/dashboard">
-                <a
-                  className={`px-4 py-2 rounded-lg font-medium transition-all hover-elevate active-elevate-2 ${
-                    location === '/dashboard' ? 'bg-accent text-accent-foreground' : 'text-foreground'
-                  }`}
-                  data-testid="link-dashboard"
-                >
-                  Dashboard
-                </a>
+              <Link 
+                href="/dashboard"
+                className={`px-4 py-2 rounded-lg font-medium transition-all hover-elevate active-elevate-2 ${
+                  location === '/dashboard' ? 'bg-accent text-accent-foreground' : 'text-foreground'
+                }`}
+                data-testid="link-dashboard"
+              >
+                Dashboard
               </Link>
-              <Link href="/browse">
-                <a
-                  className={`px-4 py-2 rounded-lg font-medium transition-all hover-elevate active-elevate-2 ${
-                    location === '/browse' ? 'bg-accent text-accent-foreground' : 'text-foreground'
-                  }`}
-                  data-testid="link-browse"
-                >
-                  {user.role === 'business' ? 'Post Gig' : 'Browse Gigs'}
-                </a>
+              <Link 
+                href="/browse"
+                className={`px-4 py-2 rounded-lg font-medium transition-all hover-elevate active-elevate-2 ${
+                  location === '/browse' ? 'bg-accent text-accent-foreground' : 'text-foreground'
+                }`}
+                data-testid="link-browse"
+              >
+                {user.role === 'business' ? 'Post Gig' : 'Browse Gigs'}
               </Link>
 
               {user.role === 'student' && (
-                <Link href="/my-applications">
-                  <a
-                    className={`px-4 py-2 rounded-lg font-medium transition-all hover-elevate active-elevate-2 ${
-                      location === '/my-applications' ? 'bg-accent text-accent-foreground' : 'text-foreground'
-                    }`}
-                    data-testid="link-my-applications"
-                  >
-                    My Applications
-                  </a>
+                <Link 
+                  href="/my-applications"
+                  className={`px-4 py-2 rounded-lg font-medium transition-all hover-elevate active-elevate-2 ${
+                    location === '/my-applications' ? 'bg-accent text-accent-foreground' : 'text-foreground'
+                  }`}
+                  data-testid="link-my-applications"
+                >
+                  My Applications
                 </Link>
               )}
 
               {user.role === 'business' && (
-                <Link href="/my-gigs">
-                  <a
-                    className={`px-4 py-2 rounded-lg font-medium transition-all hover-elevate active-elevate-2 ${
-                      location === '/my-gigs' ? 'bg-accent text-accent-foreground' : 'text-foreground'
-                    }`}
-                    data-testid="link-my-gigs"
-                  >
-                    My Gigs
-                  </a>
+                <Link 
+                  href="/my-gigs"
+                  className={`px-4 py-2 rounded-lg font-medium transition-all hover-elevate active-elevate-2 ${
+                    location === '/my-gigs' ? 'bg-accent text-accent-foreground' : 'text-foreground'
+                  }`}
+                  data-testid="link-my-gigs"
+                >
+                  My Gigs
                 </Link>
               )}
 
@@ -99,7 +93,7 @@ export function Navbar() {
                 <DropdownMenuTrigger asChild>
                   <button className="hover-elevate active-elevate-2 rounded-full transition-all" data-testid="button-user-menu">
                     <Avatar className="w-10 h-10 border-2 border-primary">
-                      <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground font-semibold">
+                      <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
                         {getInitials(user.name)}
                       </AvatarFallback>
                     </Avatar>
@@ -126,10 +120,14 @@ export function Navbar() {
             <div className="flex items-center space-x-3">
               <ThemeToggle />
               <Link href="/login">
-                <Button variant="ghost" data-testid="button-login">Login</Button>
+                <Button variant="ghost" data-testid="button-login" asChild>
+                  <span>Login</span>
+                </Button>
               </Link>
               <Link href="/register">
-                <Button data-testid="button-register">Get Started</Button>
+                <Button data-testid="button-register" asChild>
+                  <span>Get Started</span>
+                </Button>
               </Link>
             </div>
           )}

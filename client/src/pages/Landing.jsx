@@ -15,12 +15,12 @@ export default function Landing() {
 
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent -z-10" />
+  <div className="absolute inset-0 bg-accent/5 -z-10" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6">
               Connecting Local Youth to{' '}
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <span className="text-primary font-semibold">
                 Micro-Opportunities
               </span>
             </h1>
@@ -28,8 +28,8 @@ export default function Landing() {
               SkillBridge empowers college students and local youth to showcase their skills and connect with small businesses for affordable, meaningful gigs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/register">
-                <Button size="lg" className="text-lg px-8 h-14" data-testid="button-get-started">
+                <Link href="/register">
+                <Button size="lg" className="text-lg px-8 h-14 bg-primary text-primary-foreground hover:opacity-95" data-testid="button-get-started">
                   Get Started Free
                 </Button>
               </Link>
@@ -79,32 +79,32 @@ export default function Landing() {
         <div className="grid md:grid-cols-3 gap-8">
           <div className="relative">
             <div className="flex flex-col items-center text-center">
-              <div className="flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground text-2xl font-bold mb-6">
+              <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-6">
                 1
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-4">Create Your Profile</h3>
               <p className="text-muted-foreground mb-6">
                 Sign up in minutes and showcase your skills, experience, or business needs
               </p>
-              <div className="w-full h-1 bg-gradient-to-r from-primary to-transparent hidden md:block absolute top-10 left-1/2" />
+              <div className="w-full h-1 bg-primary/20 hidden md:block absolute top-10 left-1/2" />
             </div>
           </div>
 
           <div className="relative">
             <div className="flex flex-col items-center text-center">
-              <div className="flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground text-2xl font-bold mb-6">
+              <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-6">
                 2
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-4">Find Matches</h3>
               <p className="text-muted-foreground mb-6">
                 Browse opportunities or get matched based on your skills and interests
               </p>
-              <div className="w-full h-1 bg-gradient-to-r from-primary to-transparent hidden md:block absolute top-10 left-1/2" />
+              <div className="w-full h-1 bg-primary/20 hidden md:block absolute top-10 left-1/2" />
             </div>
           </div>
 
           <div className="flex flex-col items-center text-center">
-            <div className="flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground text-2xl font-bold mb-6">
+            <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-6">
               3
             </div>
             <h3 className="text-2xl font-bold text-foreground mb-4">Start Working</h3>
@@ -196,7 +196,7 @@ export default function Landing() {
           <Card className="text-center overflow-visible hover-elevate transition-all">
             <CardHeader className="pt-8">
               <div className="flex justify-center mb-4">
-                <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary">
+                <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10">
                   <Zap className="w-8 h-8 text-primary-foreground" />
                 </div>
               </div>
@@ -212,7 +212,7 @@ export default function Landing() {
           <Card className="text-center overflow-visible hover-elevate transition-all">
             <CardHeader className="pt-8">
               <div className="flex justify-center mb-4">
-                <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-secondary to-primary">
+                <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-secondary/10">
                   <Users className="w-8 h-8 text-primary-foreground" />
                 </div>
               </div>
@@ -228,7 +228,7 @@ export default function Landing() {
           <Card className="text-center overflow-visible hover-elevate transition-all">
             <CardHeader className="pt-8">
               <div className="flex justify-center mb-4">
-                <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary">
+                <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10">
                   <TrendingUp className="w-8 h-8 text-primary-foreground" />
                 </div>
               </div>
@@ -265,7 +265,7 @@ export default function Landing() {
                   "SkillBridge helped me land my first freelance gig! I built a website for a local coffee shop and gained real experience."
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground font-bold">
+                  <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
                     SM
                   </div>
                   <div>
@@ -287,7 +287,7 @@ export default function Landing() {
                   "As a small business owner, finding affordable help was always a challenge. SkillBridge connected me with talented students who delivered great work."
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-primary-foreground font-bold">
+                  <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-primary-foreground font-bold">
                     JC
                   </div>
                   <div>
@@ -309,7 +309,7 @@ export default function Landing() {
                   "I've completed over 15 gigs on SkillBridge. It's perfect for earning money between classes while building my design portfolio!"
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground font-bold">
+                  <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
                     ER
                   </div>
                   <div>
@@ -460,7 +460,7 @@ export default function Landing() {
 
       {/* CTA Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <Card className="overflow-visible bg-gradient-to-br from-primary to-secondary text-primary-foreground">
+          <Card className="overflow-visible bg-secondary text-secondary-foreground">
           <CardContent className="py-16 text-center">
             <h2 className="text-4xl font-bold mb-4">Ready to Get Started?</h2>
             <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
@@ -481,10 +481,10 @@ export default function Landing() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-1">
               <div className="flex items-center space-x-2 mb-4">
-                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary">
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary">
                   <Briefcase className="w-6 h-6 text-primary-foreground" />
                 </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                <span className="text-xl font-bold text-primary">
                   SkillBridge
                 </span>
               </div>

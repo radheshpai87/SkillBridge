@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { authService } from '@/services';
 
 const AuthContext = createContext(undefined);
 
@@ -13,21 +14,11 @@ export function AuthProvider({ children }) {
       
       if (storedToken) {
         try {
-          const response = await fetch('/api/auth/me', {
-            headers: {
-              'Authorization': `Bearer ${storedToken}`,
-            },
-          });
-
-          if (response.ok) {
-            const userData = await response.json();
-            setToken(storedToken);
-            setUser(userData);
-          } else {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-          }
+          const userData = await authService.getCurrentUser();
+          setToken(storedToken);
+          setUser(userData);
         } catch (error) {
+          console.error('Failed to load user:', error);
           localStorage.removeItem('token');
           localStorage.removeItem('user');
         }
@@ -52,10 +43,15 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-primary to-secondary animate-pulse"></div>
+        <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-primary animate-pulse"></div>
         <p className="text-muted-foreground">Loading...</p>
       </div>
     </div>;
@@ -67,6 +63,7 @@ export function AuthProvider({ children }) {
       token,
       login,
       logout,
+      updateUser,
       isAuthenticated: !!token && !!user
     }}>
       {children}

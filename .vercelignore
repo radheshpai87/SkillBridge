@@ -1,0 +1,41 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Local development
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Build outputs (except dist/public which is needed)
+dist/server.js
+.vite
+*.local
+
+# Testing
+coverage
+
+# Misc
+.DS_Store
+*.pem
+.idea
+.vscode
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Server files (not needed for serverless)
+server/index.js
+server/vite.js
+
+# Scripts
+server/scripts/seed.js
+
+# Documentation (optional)
+*.md
+!README.md
