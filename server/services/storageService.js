@@ -244,6 +244,7 @@ export class MongoStorage {
       gigId,
       studentId,
       status: doc.status,
+      applicationMessage: doc.applicationMessage || null,
       rejectionReason: doc.rejectionReason || null,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
