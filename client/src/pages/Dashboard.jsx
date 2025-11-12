@@ -25,7 +25,8 @@ import {
   Calendar,
   DollarSign,
   Activity,
-  Star
+  Star,
+  Plus
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -59,7 +60,9 @@ export default function Dashboard() {
 
   // Student Statistics
   const studentStats = useMemo(() => {
-    if (!myApplications || user?.role !== 'student') return null;
+    if (!myApplications || !Array.isArray(myApplications) || user?.role !== 'student') {
+      return { total: 0, pending: 0, accepted: 0, rejected: 0, acceptanceRate: 0 };
+    }
     
     const total = myApplications.length;
     const pending = myApplications.filter(app => app.status === 'pending').length;
@@ -68,11 +71,13 @@ export default function Dashboard() {
     const acceptanceRate = total > 0 ? Math.round((accepted / total) * 100) : 0;
     
     return { total, pending, accepted, rejected, acceptanceRate };
-  }, [myApplications, user]);
+  }, [myApplications, user?.role]);
 
   // Business Statistics
   const businessStats = useMemo(() => {
-    if (!gigs || user?.role !== 'business') return null;
+    if (!gigs || !Array.isArray(gigs) || !user?.id || user?.role !== 'business') {
+      return { totalGigs: 0, totalApplicants: 0, avgApplicantsPerGig: 0, totalBudget: 0 };
+    }
     
     const myGigs = gigs.filter(g => g.postedBy === user.id);
     const totalGigs = myGigs.length;
@@ -86,7 +91,7 @@ export default function Dashboard() {
     const totalBudget = myGigs.reduce((sum, gig) => sum + (gig.budget || 0), 0);
     
     return { totalGigs, totalApplicants, avgApplicantsPerGig, totalBudget };
-  }, [gigs, user]);
+  }, [gigs, user?.id, user?.role]);
 
   const applyMutation = useMutation({
     mutationFn: async (gigId) => {
