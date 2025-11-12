@@ -4,17 +4,38 @@ import logger from '../utils/logger.js';
 
 export async function connectDatabase() {
   try {
+    // If already connected, return
+    if (mongoose.connection.readyState === 1) {
+      logger.info('✅ Already connected to MongoDB');
+      return;
+    }
+
+    // If connecting, wait for it
+    if (mongoose.connection.readyState === 2) {
+      logger.info('⏳ Waiting for MongoDB connection...');
+      await new Promise((resolve) => {
+        mongoose.connection.once('connected', resolve);
+      });
+      return;
+    }
+
     const options = {
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 10000, // Increased for serverless
       socketTimeoutMS: 45000,
+      bufferCommands: false, // Disable buffering for serverless
     };
 
     await mongoose.connect(config.mongodb.uri, options);
     logger.info('✅ Connected to MongoDB successfully');
   } catch (error) {
     logger.error('❌ MongoDB connection error:', error);
-    process.exit(1);
+    // Don't exit in serverless environment
+    if (config.isProduction && process.env.VERCEL) {
+      throw error;
+    } else {
+      process.exit(1);
+    }
   }
 }
 
