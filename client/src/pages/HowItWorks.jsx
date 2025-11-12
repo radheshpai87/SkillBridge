@@ -11,7 +11,6 @@ import {
   GraduationCap,
   Building2,
   MessageSquare,
-  DollarSign,
   Clock,
   Star
 } from 'lucide-react';
@@ -51,7 +50,7 @@ export default function HowItWorks() {
       description: "Our smart algorithm matches you with relevant opportunities within minutes."
     },
     {
-      icon: <DollarSign className="w-6 h-6 text-secondary" />,
+      icon: <span className="w-6 h-6 text-secondary flex items-center justify-center font-bold">₹</span>,
       title: "Secure Payments",
       description: "All transactions are protected with bank-level security and instant payouts."
     },

@@ -6,7 +6,6 @@ import {
   Shield,
   Zap,
   Users,
-  DollarSign,
   Clock,
   Star,
   TrendingUp,
@@ -20,7 +19,7 @@ import {
 export default function Benefits() {
   const studentBenefits = [
     {
-      icon: <DollarSign className="w-8 h-8 text-primary" />,
+      icon: <span className="w-8 h-8 text-primary flex items-center justify-center font-bold text-lg">₹</span>,
       title: "Earn Competitive Rates",
       description: "Get paid fairly for your skills and experience. Our platform ensures you receive market-rate compensation for quality work in the Indian market.",
       details: ["Transparent pricing", "Quick payouts", "No hidden fees"]
@@ -71,7 +70,7 @@ export default function Benefits() {
       details: ["Verified skills", "Background checks", "Performance tracking"]
     },
     {
-      icon: <DollarSign className="w-8 h-8 text-secondary" />,
+      icon: <span className="w-8 h-8 text-secondary flex items-center justify-center font-bold text-lg">₹</span>,
       title: "Cost Effective",
       description: "Hire for specific projects without long-term commitments. Pay only for the work you need.",
       details: ["Project-based pricing", "No overhead costs", "Scalable workforce"]

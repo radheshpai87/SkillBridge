@@ -97,7 +97,7 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
 });
 
 export const updateProfile = asyncHandler(async (req, res) => {
-  const { name, bio, skills, companyName, description } = req.body;
+  const { name, bio, skills, companyName, description, coordinates } = req.body;
   const userId = req.user.id;
 
   const updates = {};
@@ -106,6 +106,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
   if (skills) updates.skills = skills;
   if (companyName !== undefined) updates.companyName = companyName;
   if (description !== undefined) updates.description = description;
+  if (coordinates) updates.coordinates = coordinates;
 
   const updatedUser = await storage.updateUser(userId, updates);
   

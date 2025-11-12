@@ -4,6 +4,23 @@ import { User as UserModel, Gig as GigModel, Application as ApplicationModel } f
 import { connectDatabase } from '../config/database.js';
 import logger from '../utils/logger.js';
 
+// Function to randomize coordinates within a city area
+function randomizeCoordinates(baseLat, baseLng, radiusKm = 5) {
+  // Convert radius from km to degrees (approximate)
+  // 1 degree latitude ≈ 111 km, 1 degree longitude ≈ 111 km * cos(lat)
+  const latRadius = radiusKm / 111;
+  const lngRadius = radiusKm / (111 * Math.cos(baseLat * Math.PI / 180));
+  
+  // Generate random offset within the radius
+  const latOffset = (Math.random() - 0.5) * 2 * latRadius;
+  const lngOffset = (Math.random() - 0.5) * 2 * lngRadius;
+  
+  return {
+    latitude: Math.round((baseLat + latOffset) * 10000) / 10000,
+    longitude: Math.round((baseLng + lngOffset) * 10000) / 10000
+  };
+}
+
 const sampleStudents = [
   {
     name: 'Arjun Sharma',
@@ -104,70 +121,91 @@ const sampleGigs = [
     description: 'Looking for a creative student to help manage our Instagram and Facebook pages. Need 3-5 posts per week showcasing our authentic Indian dishes, traditional recipes, and café culture. Experience with Indian food photography preferred.',
     budget: 2500,
     location: 'Bangalore',
-    requiredSkills: ['Social Media', 'Content Writing', 'Photography']
+    coordinates: randomizeCoordinates(12.9716, 77.5946)
   },
   {
     title: 'E-commerce Website Development',
     description: 'Need a student developer to help build an e-commerce website for our saree boutique using React and JavaScript. Should include product catalog, payment integration with Indian banks, and shipping calculator. Experience with Indian e-commerce platforms like Shopify India preferred.',
     budget: 8000,
     location: 'Mumbai',
-    requiredSkills: ['JavaScript', 'Web Development', 'React']
+    coordinates: randomizeCoordinates(19.0760, 72.8777)
   },
   {
     title: 'Yoga Class Photography & Video',
     description: 'Seeking photographer/videographer to capture high-quality images and videos during our traditional yoga and wellness classes for marketing materials and social media. Understanding of Indian wellness culture appreciated.',
     budget: 3500,
     location: 'Mumbai',
-    requiredSkills: ['Photography', 'Video Editing']
+    coordinates: randomizeCoordinates(19.0760, 72.8777)
   },
   {
     title: 'Festival Marketing Materials Design',
     description: 'Need creative designs for promotional posters and social media graphics for upcoming Indian festivals. Should incorporate traditional motifs and modern design elements for Diwali and Holi campaigns.',
     budget: 2000,
     location: 'Delhi',
-    requiredSkills: ['Graphic Design', 'Adobe Photoshop', 'Canva']
+    coordinates: randomizeCoordinates(28.7041, 77.1025)
   },
   {
     title: 'Handloom Product Photography',
     description: 'Looking for someone to photograph our traditional sarees and handloom products for our online store. Need clean, professional product shots that showcase the intricate craftsmanship and traditional designs.',
     budget: 4000,
     location: 'Chennai',
-    requiredSkills: ['Photography', 'Graphic Design']
+    coordinates: randomizeCoordinates(13.0827, 80.2707)
   },
   {
     title: 'Instagram Reels for Cultural Content',
     description: 'Help us create engaging Instagram Reels showcasing traditional Indian fashion, cultural stories, and fashion tips. Need 2-3 reels per week featuring our boutique collection and Indian heritage.',
     budget: 3000,
     location: 'Delhi',
-    requiredSkills: ['Video Editing', 'Social Media', 'Content Writing']
+    coordinates: randomizeCoordinates(28.7041, 77.1025)
   },
   {
     title: 'Legal Document Data Management',
     description: 'Need help organizing client case files and entering data into our legal case management system. Experience with Indian legal documentation, Excel, and data analysis preferred. Knowledge of Indian corporate law is a plus.',
     budget: 2500,
     location: 'Delhi',
-    requiredSkills: ['Data Analysis', 'Excel']
+    coordinates: randomizeCoordinates(28.7041, 77.1025)
   },
   {
     title: 'Legal Website Content & Blog Writing',
     description: 'Looking for a writer with legal knowledge to create engaging content for our law firm website, write blog posts about Indian corporate law updates, and update our content management system. Understanding of Indian legal system preferred.',
     budget: 3500,
     location: 'Bangalore',
-    requiredSkills: ['Content Writing', 'Copywriting']
+    coordinates: randomizeCoordinates(12.9716, 77.5946)
   },
   {
     title: 'Traditional Sweets Social Media Manager',
     description: 'Manage our social media presence by posting daily specials, traditional sweet recipes, festival offerings, and engaging with customers online. Experience with Indian food industry preferred.',
     budget: 3200,
     location: 'Chennai',
-    requiredSkills: ['Social Media', 'Photography', 'Content Writing']
+    coordinates: randomizeCoordinates(13.0827, 80.2707)
   },
   {
     title: 'Recipe Cards for Indian Sweets',
     description: 'Design beautiful recipe cards for our signature traditional Indian sweets and desserts to give away to customers. Should incorporate Indian cultural elements and match our traditional brand aesthetic.',
     budget: 2500,
     location: 'Chennai',
-    requiredSkills: ['Graphic Design', 'Canva']
+    coordinates: randomizeCoordinates(13.0827, 80.2707)
+  },
+  {
+    title: 'Mangalore Seafood Restaurant Social Media',
+    description: 'Help manage social media for our authentic Mangalore seafood restaurant. Create engaging content about coastal Karnataka cuisine, fresh seafood dishes, and local fishing culture. Experience with food photography preferred.',
+    budget: 2800,
+    location: 'Mangalore',
+    coordinates: randomizeCoordinates(12.9141, 74.8560)
+  },
+  {
+    title: 'Beach Resort Website Development',
+    description: 'Build a responsive website for our beach resort in Mangalore. Include booking system, photo gallery, local attractions, and information about coastal Karnataka tourism. Experience with tourism websites preferred.',
+    budget: 6500,
+    location: 'Mangalore',
+    coordinates: randomizeCoordinates(12.9141, 74.8560)
+  },
+  {
+    title: 'Mangalore Spice Brand Packaging Design',
+    description: 'Design creative packaging for our authentic Mangalore spice brand. Should incorporate local coastal Karnataka motifs, traditional spice illustrations, and modern branding elements for export markets.',
+    budget: 3500,
+    location: 'Mangalore',
+    coordinates: randomizeCoordinates(12.9141, 74.8560)
   }
 ];
 

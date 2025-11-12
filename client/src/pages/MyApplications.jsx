@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ClipboardList, DollarSign, MapPin, Calendar, CheckCircle2, XCircle, Clock, FileText, AlertCircle, ArrowLeft } from 'lucide-react';
+import { ClipboardList, MapPin, Calendar, CheckCircle2, XCircle, Clock, FileText, AlertCircle, ArrowLeft } from 'lucide-react';
 
 export default function MyApplications() {
   const { user } = useAuth();
@@ -177,7 +177,7 @@ export default function MyApplications() {
 
                           <div className="space-y-2">
                             <div className="flex items-center gap-2 text-sm">
-                              <DollarSign className="w-4 h-4 text-muted-foreground" />
+                              <span className="w-4 h-4 text-muted-foreground flex items-center justify-center font-bold">₹</span>
                               <span className="font-semibold text-foreground">₹{app.gig?.budget}</span>
                             </div>
 

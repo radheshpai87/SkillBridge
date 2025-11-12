@@ -5,13 +5,17 @@ import { Navbar } from '@/components/Navbar';
 import { GigCard } from '@/components/GigCard';
 import { SkillBadge } from '@/components/SkillBadge';
 import { ManageGigDialog } from '@/components/ManageGigDialog';
+import { ApplyToGigDialog } from '@/components/ApplyToGigDialog';
+import { ProfileEditDialog } from '@/components/ProfileEditDialog';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
+import { useGeolocation } from '@/hooks/use-geolocation';
 import { queryClient, apiRequest } from '@/lib/queryClient';
+import { authService } from '@/services/authService';
 import { 
   Briefcase, 
   TrendingUp, 
@@ -23,18 +27,22 @@ import {
   Target,
   Eye,
   Calendar,
-  DollarSign,
   Activity,
   Star,
-  Plus
+  Plus,
+  MapPin
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [manageGig, setManageGig] = useState(null);
+  const [applyDialogOpen, setApplyDialogOpen] = useState(false);
+  const [selectedGig, setSelectedGig] = useState(null);
+  const [profileEditOpen, setProfileEditOpen] = useState(false);
+  const { coordinates, loading: locationLoading, error: locationError, refetch: refetchLocation } = useGeolocation();
 
   const { data: gigs, isLoading } = useQuery({
     queryKey: ['/api/gigs/all'],
@@ -94,8 +102,8 @@ export default function Dashboard() {
   }, [gigs, user?.id, user?.role]);
 
   const applyMutation = useMutation({
-    mutationFn: async (gigId) => {
-      return apiRequest('POST', `/api/applications/gig/${gigId}`);
+    mutationFn: async ({ gigId, applicationMessage }) => {
+      return apiRequest('POST', `/api/applications/gig/${gigId}`, { applicationMessage });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gigs/all'] });
@@ -115,6 +123,29 @@ export default function Dashboard() {
     },
   });
 
+  const updateProfileMutation = useMutation({
+    mutationFn: async (updates) => {
+      return authService.updateProfile(updates);
+    },
+    onSuccess: (updatedUser) => {
+      // Update both React Query cache and AuthContext
+      queryClient.setQueryData(['auth-user'], updatedUser);
+      updateUser(updatedUser);
+      queryClient.invalidateQueries({ queryKey: ['/api/gigs/matched'] });
+      toast({
+        title: 'Profile updated!',
+        description: 'Your location has been updated successfully.',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Update failed',
+        description: 'Please try again later.',
+        variant: 'destructive',
+      });
+    },
+  });
+
   if (!user) return null;
 
   const userSkills = user.skills || [];
@@ -128,7 +159,13 @@ export default function Dashboard() {
   const totalApplicants = Object.values(applicantCounts).reduce((sum, count) => sum + count, 0);
 
   const handleApply = (gigId) => {
-    applyMutation.mutate(gigId);
+    const gig = gigs?.find(g => g.id === gigId);
+    setSelectedGig(gig);
+    setApplyDialogOpen(true);
+  };
+
+  const handleApplySubmit = (gigId, applicationMessage) => {
+    applyMutation.mutate({ gigId, applicationMessage });
   };
 
   const handleManage = (gigId) => {
@@ -137,6 +174,20 @@ export default function Dashboard() {
       setManageGig({ id: gig.id, title: gig.title });
     }
   };
+
+  const handleProfileSave = (profileData) => {
+    updateProfileMutation.mutate(profileData);
+    setProfileEditOpen(false);
+  };
+
+  // Automatically update user coordinates when geolocation changes
+  useEffect(() => {
+    if (coordinates && (!user?.coordinates || 
+        user.coordinates.latitude !== coordinates.latitude || 
+        user.coordinates.longitude !== coordinates.longitude)) {
+      updateProfileMutation.mutate({ coordinates });
+    }
+  }, [coordinates, user?.coordinates]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -233,11 +284,24 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <Card className="overflow-visible lg:col-span-2">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Award className="w-5 h-5 text-primary" />
-                    Your Profile
-                  </CardTitle>
-                  <CardDescription>Showcase your skills and experience</CardDescription>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <Award className="w-5 h-5 text-primary" />
+                        Your Profile
+                      </CardTitle>
+                      <CardDescription>Showcase your skills and experience</CardDescription>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setProfileEditOpen(true)}
+                      className="gap-2"
+                    >
+                      <Award className="w-4 h-4" />
+                      Edit Profile
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {user.bio && (
@@ -261,6 +325,48 @@ export default function Dashboard() {
                     ) : (
                       <div className="text-sm text-muted-foreground italic bg-muted/30 p-4 rounded-lg">
                         💡 No skills added yet. Add skills to see matched opportunities!
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-medium text-muted-foreground">Location</h3>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={refetchLocation}
+                        disabled={locationLoading}
+                        className="h-6 w-6 p-0"
+                      >
+                        <MapPin className="w-3 h-3" />
+                      </Button>
+                    </div>
+                    {locationLoading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        <p className="text-sm text-muted-foreground">Detecting location...</p>
+                      </div>
+                    ) : locationError ? (
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-red-500" />
+                        <p className="text-sm text-red-600 dark:text-red-400">
+                          Location access denied. Click the icon to retry.
+                        </p>
+                      </div>
+                    ) : coordinates ? (
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-green-500" />
+                        <p className="text-foreground">
+                          Location detected ({coordinates.latitude.toFixed(4)}, {coordinates.longitude.toFixed(4)})
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-muted-foreground" />
+                        <p className="text-muted-foreground">
+                          Location not available
+                        </p>
                       </div>
                     )}
                   </div>
@@ -314,7 +420,7 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-foreground">Matched Opportunities</h2>
-                  <p className="text-sm text-muted-foreground">Gigs that match your skills</p>
+                  <p className="text-sm text-muted-foreground">Gigs that match your skills and location</p>
                 </div>
               </div>
 
@@ -353,12 +459,12 @@ export default function Dashboard() {
                   <CardContent className="py-12 text-center">
                     <Briefcase className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
                     <h3 className="text-xl font-semibold text-foreground mb-2">
-                      {userSkills.length === 0 ? 'Add skills to see matches' : 'No matched gigs yet'}
+                      {userSkills.length === 0 && !coordinates ? 'Add skills and enable location to see matches' : 'No matched gigs yet'}
                     </h3>
                     <p className="text-muted-foreground mb-6">
-                      {userSkills.length === 0 
-                        ? 'Add skills to your profile to see opportunities that match your expertise' 
-                        : 'Try adding more skills to your profile or browse all available gigs'}
+                      {userSkills.length === 0 && !coordinates 
+                        ? 'Add skills to your profile and enable location access to see opportunities that match your expertise and area' 
+                        : 'Try adding more skills or browse all available gigs'}
                     </p>
                     <Button 
                       variant="outline" 
@@ -442,7 +548,7 @@ export default function Dashboard() {
                       <p className="text-xs text-muted-foreground mt-1">Offered across gigs</p>
                     </div>
                     <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-yellow-500/10">
-                      <DollarSign className="w-6 h-6 text-yellow-600 dark:text-yellow-500" />
+                      <span className="w-6 h-6 text-yellow-600 dark:text-yellow-500 flex items-center justify-center font-bold text-lg">₹</span>
                     </div>
                   </div>
                 </CardContent>
@@ -453,11 +559,24 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <Card className="overflow-visible lg:col-span-2">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Award className="w-5 h-5 text-primary" />
-                    Company Profile
-                  </CardTitle>
-                  <CardDescription>Your business information</CardDescription>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <Award className="w-5 h-5 text-primary" />
+                        Company Profile
+                      </CardTitle>
+                      <CardDescription>Your business information</CardDescription>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setProfileEditOpen(true)}
+                      className="gap-2"
+                    >
+                      <Award className="w-4 h-4" />
+                      Edit Profile
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {user.companyName && (
@@ -590,6 +709,22 @@ export default function Dashboard() {
         gigTitle={manageGig?.title || ''}
         open={!!manageGig}
         onOpenChange={(open) => !open && setManageGig(null)}
+      />
+
+      <ApplyToGigDialog
+        gig={selectedGig}
+        open={applyDialogOpen}
+        onOpenChange={setApplyDialogOpen}
+        onSubmit={handleApplySubmit}
+        isSubmitting={applyMutation.isPending}
+      />
+
+      <ProfileEditDialog
+        open={profileEditOpen}
+        onOpenChange={setProfileEditOpen}
+        onSave={handleProfileSave}
+        user={user}
+        isLoading={updateProfileMutation.isPending}
       />
     </div>
   );

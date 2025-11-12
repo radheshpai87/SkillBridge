@@ -1,6 +1,7 @@
 import { storage } from '../services/storageService.js';
 import { ValidationError, NotFoundError, ForbiddenError } from '../utils/errors.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
+import { getCityCoordinates, calculateDistance } from '../utils/location.js';
 
 export const createGig = asyncHandler(async (req, res) => {
   const { title, description, budget, location } = req.body;
@@ -10,11 +11,14 @@ export const createGig = asyncHandler(async (req, res) => {
     throw new ValidationError('Missing required fields: title, description, budget, location');
   }
 
+  const coordinates = getCityCoordinates(location) || { latitude: 0, longitude: 0 }; // Default fallback
+
   const gig = await storage.createGig({
     title,
     description,
     budget: parseInt(budget),
     location,
+    coordinates,
     postedBy: req.user.id,
   });
 
@@ -52,37 +56,75 @@ export const getMatchedGigs = asyncHandler(async (req, res) => {
   const user = req.user;
   const allGigs = await storage.getAllGigs();
   const userSkills = user.skills || [];
+  const userCoordinates = user.coordinates;
 
   // Log for debugging
-  console.log(`[MATCH] User: ${user.name}, Skills: [${userSkills.join(', ')}]`);
+  console.log(`[MATCH] User: ${user.name}, Skills: [${userSkills.join(', ')}], Coordinates: ${userCoordinates ? `(${userCoordinates.latitude}, ${userCoordinates.longitude})` : 'Not set'}`);
 
-  if (userSkills.length === 0) {
-    console.log('[MATCH] No skills found, returning 0 gigs');
+  if (userSkills.length === 0 && !userCoordinates) {
+    console.log('[MATCH] No skills or coordinates found, returning 0 gigs');
     return res.json({
       success: true,
       count: 0,
       gigs: [],
-      message: 'Add skills to your profile to see matched opportunities',
+      message: 'Add skills and enable location to see matched opportunities',
     });
   }
 
-  const matchedGigs = allGigs.filter((gig) => {
-    const searchText = `${gig.title} ${gig.description}`.toLowerCase();
-    const matches = userSkills.some((skill) => searchText.includes(skill.toLowerCase()));
-    
-    if (matches) {
-      console.log(`[MATCH] ✓ "${gig.title}" matches skills`);
-    }
-    
-    return matches;
-  });
+  let matchedGigs = [];
 
-  console.log(`[MATCH] Found ${matchedGigs.length} matching gigs out of ${allGigs.length} total`);
+  // First, filter by skills if user has skills
+  if (userSkills.length > 0) {
+    const skillMatchedGigs = allGigs.filter((gig) => {
+      const searchText = `${gig.title} ${gig.description}`.toLowerCase();
+      const matches = userSkills.some((skill) => searchText.includes(skill.toLowerCase()));
+      return matches;
+    });
+    matchedGigs = skillMatchedGigs;
+    console.log(`[MATCH] Found ${skillMatchedGigs.length} gigs matching skills`);
+  }
+
+  // Then, filter by location if user has coordinates
+  if (userCoordinates && userCoordinates.latitude && userCoordinates.longitude) {
+    const locationMatchedGigs = allGigs.filter((gig) => {
+      if (!gig.coordinates) return false;
+      
+      const distance = calculateDistance(
+        userCoordinates.latitude,
+        userCoordinates.longitude,
+        gig.coordinates.latitude,
+        gig.coordinates.longitude
+      );
+      
+      // Consider gigs within 50km as location matches
+      return distance <= 50;
+    });
+    
+    console.log(`[MATCH] Found ${locationMatchedGigs.length} gigs within 50km`);
+    
+    // If user has both skills and coordinates, combine the matches
+    if (userSkills.length > 0) {
+      // Find gigs that match either skills OR location
+      const combinedMatches = [...new Set([...matchedGigs, ...locationMatchedGigs])];
+      matchedGigs = combinedMatches;
+      console.log(`[MATCH] Combined matches: ${combinedMatches.length} gigs`);
+    } else {
+      // If no skills but has coordinates, use location matches
+      matchedGigs = locationMatchedGigs;
+    }
+  }
+
+  // Remove duplicates and sort by relevance (prioritize skill matches)
+  const uniqueGigs = matchedGigs.filter((gig, index, self) => 
+    self.findIndex(g => g.id === gig.id) === index
+  );
+
+  console.log(`[MATCH] Final result: ${uniqueGigs.length} unique matched gigs out of ${allGigs.length} total`);
 
   res.json({
     success: true,
-    count: matchedGigs.length,
-    gigs: matchedGigs,
+    count: uniqueGigs.length,
+    gigs: uniqueGigs,
   });
 });
 
@@ -114,7 +156,11 @@ export const updateGig = asyncHandler(async (req, res) => {
   if (title) updates.title = title;
   if (description) updates.description = description;
   if (budget) updates.budget = parseInt(budget);
-  if (location) updates.location = location;
+  if (location) {
+    updates.location = location;
+    // Update coordinates when location changes
+    updates.coordinates = getCityCoordinates(location) || { latitude: 0, longitude: 0 };
+  }
 
   const updatedGig = await storage.updateGig(gigId, updates);
 

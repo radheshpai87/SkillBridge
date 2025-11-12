@@ -9,6 +9,10 @@ const userSchema = new mongoose.Schema({
   bio: String,
   companyName: String,
   description: String,
+  coordinates: {
+    latitude: { type: Number },
+    longitude: { type: Number }
+  },
 }, { 
   timestamps: true,
   toJSON: {

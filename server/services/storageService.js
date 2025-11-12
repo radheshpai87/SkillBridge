@@ -31,7 +31,7 @@ export class MongoStorage {
   }
 
   async getAllGigs() {
-    const gigs = await GigModel.find().lean();
+    const gigs = await GigModel.find().populate('postedBy', 'companyName name').lean();
     return gigs.map(gig => this.transformGig(gig));
   }
 
@@ -111,6 +111,7 @@ export class MongoStorage {
       bio: doc.bio,
       companyName: doc.companyName,
       description: doc.description,
+      coordinates: doc.coordinates,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     };
@@ -127,6 +128,7 @@ export class MongoStorage {
       bio: doc.bio,
       companyName: doc.companyName,
       description: doc.description,
+      coordinates: doc.coordinates,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     };
@@ -134,13 +136,25 @@ export class MongoStorage {
 
   transformGig(doc) {
     const id = doc._id ? doc._id.toString() : doc.id;
-    const postedBy = doc.postedBy && typeof doc.postedBy === 'object' ? doc.postedBy.toString() : doc.postedBy;
+    let postedBy;
+    if (doc.postedBy && typeof doc.postedBy === 'object' && doc.postedBy._id) {
+      // Populated object
+      postedBy = {
+        id: doc.postedBy._id.toString(),
+        companyName: doc.postedBy.companyName,
+        name: doc.postedBy.name,
+      };
+    } else {
+      // Just the ID string or not populated
+      postedBy = doc.postedBy && typeof doc.postedBy === 'object' ? doc.postedBy.toString() : doc.postedBy;
+    }
     return {
       id,
       title: doc.title,
       description: doc.description,
       budget: doc.budget,
       location: doc.location,
+      coordinates: doc.coordinates,
       postedBy,
       applicants: doc.applicants ? doc.applicants.map((id) => 
         typeof id === 'object' ? id.toString() : id

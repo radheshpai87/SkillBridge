@@ -35,6 +35,10 @@ export const updateProfileSchema = z.object({
   skills: z.array(z.string()).optional(),
   companyName: z.string().optional(),
   description: z.string().optional(),
+  coordinates: z.object({
+    latitude: z.number(),
+    longitude: z.number()
+  }).optional(),
 });
 
 export const updateApplicationStatusSchema = z.object({

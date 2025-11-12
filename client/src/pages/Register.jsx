@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { PublicHeader } from '@/components/PublicHeader';
 import { useToast } from '@/hooks/use-toast';
 import { Briefcase, Mail, Lock, User, GraduationCap, Building2 } from 'lucide-react';
@@ -15,6 +16,7 @@ export default function Register() {
     name: '',
     email: '',
     password: '',
+    confirmPassword: '',
     role: 'student',
     skills: [],
     bio: '',
@@ -26,6 +28,29 @@ export default function Register() {
   const { login } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+
+  const calculatePasswordStrength = (password) => {
+    let score = 0;
+    const checks = {
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      numbers: /\d/.test(password),
+      special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+    };
+
+    // Count passed checks
+    const passedChecks = Object.values(checks).filter(Boolean).length;
+    score = (passedChecks / 5) * 100;
+
+    // Determine strength level
+    let strength = 'weak';
+    if (score >= 80) strength = 'strong';
+    else if (score >= 60) strength = 'good';
+    else if (score >= 40) strength = 'fair';
+
+    return { score, strength, checks };
+  };
 
   const handleAddSkill = () => {
     if (skillInput.trim() && !formData.skills.includes(skillInput.trim())) {
@@ -46,6 +71,28 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate password confirmation
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: 'Password mismatch',
+        description: 'Please make sure your passwords match.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate password strength
+    const passwordStrength = calculatePasswordStrength(formData.password);
+    if (passwordStrength.strength === 'weak') {
+      toast({
+        title: 'Weak password',
+        description: 'Please choose a stronger password with at least 8 characters, including uppercase, lowercase, numbers, and special characters.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -206,7 +253,7 @@ export default function Register() {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="At least 6 characters"
+                  placeholder="At least 8 characters"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
@@ -215,6 +262,73 @@ export default function Register() {
                   data-testid="input-password"
                 />
               </div>
+              {formData.password && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Password strength:</span>
+                    <span className={`text-xs font-medium ${
+                      calculatePasswordStrength(formData.password).strength === 'weak' ? 'text-red-500' :
+                      calculatePasswordStrength(formData.password).strength === 'fair' ? 'text-yellow-500' :
+                      calculatePasswordStrength(formData.password).strength === 'good' ? 'text-blue-500' :
+                      'text-green-500'
+                    }`}>
+                      {calculatePasswordStrength(formData.password).strength.charAt(0).toUpperCase() + 
+                       calculatePasswordStrength(formData.password).strength.slice(1)}
+                    </span>
+                  </div>
+                  <Progress 
+                    value={calculatePasswordStrength(formData.password).score} 
+                    className="h-2"
+                  />
+                  <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
+                    <div className={`flex items-center gap-1 ${calculatePasswordStrength(formData.password).checks.length ? 'text-green-600' : ''}`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${calculatePasswordStrength(formData.password).checks.length ? 'bg-green-500' : 'bg-muted-foreground'}`} />
+                      8+ characters
+                    </div>
+                    <div className={`flex items-center gap-1 ${calculatePasswordStrength(formData.password).checks.uppercase ? 'text-green-600' : ''}`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${calculatePasswordStrength(formData.password).checks.uppercase ? 'bg-green-500' : 'bg-muted-foreground'}`} />
+                      Uppercase
+                    </div>
+                    <div className={`flex items-center gap-1 ${calculatePasswordStrength(formData.password).checks.lowercase ? 'text-green-600' : ''}`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${calculatePasswordStrength(formData.password).checks.lowercase ? 'bg-green-500' : 'bg-muted-foreground'}`} />
+                      Lowercase
+                    </div>
+                    <div className={`flex items-center gap-1 ${calculatePasswordStrength(formData.password).checks.numbers ? 'text-green-600' : ''}`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${calculatePasswordStrength(formData.password).checks.numbers ? 'bg-green-500' : 'bg-muted-foreground'}`} />
+                      Number
+                    </div>
+                    <div className={`flex items-center gap-1 ${calculatePasswordStrength(formData.password).checks.special ? 'text-green-600' : ''}`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${calculatePasswordStrength(formData.password).checks.special ? 'bg-green-500' : 'bg-muted-foreground'}`} />
+                      Special char
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="confirmPassword" className="text-sm font-medium text-foreground">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  required
+                  className="pl-10 h-12"
+                  data-testid="input-confirm-password"
+                />
+              </div>
+              {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                <p className="text-xs text-red-500">Passwords do not match</p>
+              )}
+              {formData.confirmPassword && formData.password === formData.confirmPassword && formData.password && (
+                <p className="text-xs text-green-600">Passwords match ✓</p>
+              )}
             </div>
 
             {formData.role === 'student' && (

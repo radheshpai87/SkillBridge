@@ -215,7 +215,7 @@ export default function PopularSkills() {
               <CardContent className="pt-6">
                 <div className="flex justify-center mb-4">
                   <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10">
-                    <DollarSign className="w-6 h-6 text-primary" />
+                    <span className="w-6 h-6 text-primary flex items-center justify-center font-bold">₹</span>
                   </div>
                 </div>
                 <h3 className="font-semibold text-foreground mb-2">Earn Competitive Rates</h3>

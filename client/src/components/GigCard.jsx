@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, DollarSign, Briefcase } from 'lucide-react';
+import { MapPin, Briefcase } from 'lucide-react';
 
 const statusVariants = {
   pending: 'default',
@@ -22,38 +22,39 @@ export function GigCard({ gig, onApply, onManage, applicationStatus, application
   const showActionButton = isOwner || onApply;
 
   return (
-    <Card className="hover-elevate transition-all duration-200 overflow-visible" data-testid={`card-gig-${gig.id}`}>
-      <CardHeader className="space-y-3">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="text-xl font-semibold text-foreground line-clamp-2" data-testid={`text-gig-title-${gig.id}`}>
+    <Card className="hover-elevate transition-all duration-200 overflow-visible h-full flex flex-col" data-testid={`card-gig-${gig.id}`}>
+      <CardHeader className="space-y-3 flex-shrink-0">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+          <h3 className="text-xl font-semibold text-foreground break-words min-w-0 flex-1" data-testid={`text-gig-title-${gig.id}`}>
             {gig.title}
           </h3>
-          <div className="flex gap-2 shrink-0">
+          <div className="flex flex-wrap gap-2 shrink-0">
             {applicationStatus && (
-              <Badge 
-                variant={statusVariants[applicationStatus]} 
+              <Badge
+                variant={statusVariants[applicationStatus]}
                 className={applicationStatus === 'accepted' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 border-green-300 dark:border-green-700' : ''}
                 data-testid={`badge-status-${gig.id}`}
               >
                 {statusLabels[applicationStatus]}
               </Badge>
             )}
-            <Badge variant="secondary" className="font-semibold">
-              <DollarSign className="w-3 h-3" />
-              {gig.budget}
+                        <Badge variant="secondary" className="font-semibold whitespace-nowrap">
+              ₹{gig.budget}
             </Badge>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground line-clamp-3" data-testid={`text-gig-description-${gig.id}`}>
-          {gig.description}
-        </p>
+      <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground line-clamp-3 min-h-[3.75rem]" data-testid={`text-gig-description-${gig.id}`}>
+            {gig.description}
+          </p>
 
-        <div className="flex items-center text-sm text-muted-foreground">
-          <MapPin className="w-4 h-4 mr-1.5 text-primary" />
-          <span data-testid={`text-gig-location-${gig.id}`}>{gig.location}</span>
+          <div className="flex items-center text-sm text-muted-foreground">
+            <MapPin className="w-4 h-4 mr-1.5 text-primary" />
+            <span data-testid={`text-gig-location-${gig.id}`}>{gig.location}</span>
+          </div>
         </div>
 
         {isOwner && applicantCount !== undefined && (
@@ -67,7 +68,7 @@ export function GigCard({ gig, onApply, onManage, applicationStatus, application
       </CardContent>
 
       {showActionButton && (
-        <CardFooter>
+        <CardFooter className="flex-shrink-0">
           {isOwner ? (
             <Button 
               onClick={() => onManage?.(gig.id)} 

@@ -5,6 +5,10 @@ const gigSchema = new mongoose.Schema({
   description: { type: String, required: true },
   budget: { type: Number, required: true },
   location: { type: String, required: true },
+  coordinates: {
+    latitude: { type: Number, required: true },
+    longitude: { type: Number, required: true }
+  },
   postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 }, { 

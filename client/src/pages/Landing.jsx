@@ -4,7 +4,7 @@ import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { PublicHeader } from '@/components/PublicHeader';
 import { 
   TrendingUp, Users, Zap, GraduationCap, Building2, 
-  CheckCircle2, Star, Clock, DollarSign, Search, MessageSquare,
+  CheckCircle2, Star, Clock, Search, MessageSquare,
   Code, Palette, Megaphone, Camera, FileEdit, Laptop
 } from 'lucide-react';
 
@@ -410,7 +410,7 @@ export default function Landing() {
             <div className="text-center">
               <div className="flex justify-center mb-4">
                 <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10">
-                  <DollarSign className="w-8 h-8 text-primary" />
+                  <span className="w-8 h-8 text-primary flex items-center justify-center font-bold text-lg">₹</span>
                 </div>
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">Affordable Rates</h3>
